@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">MyEk3</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_speichern">Speichern</string>
+    <string name="action_laden">laden</string>
+    <string name="action_settings">Settings</string>
+    <string name="input_artikel">Artikel</string>
+    <string name="input_anzahl">Anzahl</string>
+</resources>
