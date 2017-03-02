@@ -18,6 +18,13 @@ public class Artikel {
     private boolean status;
 
 // Konstruktoren
+    public Artikel(String artikel){
+        this.artikel = artikel;
+    }
+    public Artikel(String artikel, String anzahl){
+        this.artikel = artikel;
+        this.anzahl = anzahl;
+    }
     public Artikel(String artikel, String anzahl, boolean status){
         this.artikel = artikel;
         this.anzahl = anzahl;
