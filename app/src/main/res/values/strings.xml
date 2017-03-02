@@ -9,4 +9,23 @@
     <string name="action_settings">Settings</string>
     <string name="input_artikel">Artikel</string>
     <string name="input_anzahl">Anzahl</string>
+
+    <string name="title_activity_welcome">Home Screen</string>
+    <string name="next">Weiter</string>
+    <string name="skip">Überspringen</string>
+    <string name="start">Verstanden</string>
+
+    <string name="slide_1_title">Hallo lieber Erstbenutzer</string>
+    <string name="slide_1_desc">Wir freuen uns über dein Vertrauen </string>
+
+    <string name="slide_2_title">Funktionen</string>
+    <string name="slide_2_desc">Ist das nicht der Hammer!</string>
+
+    <string name="slide_3_title">Noch mehr Funktionen!</string>
+    <string name="slide_3_desc">Boah!</string>
+
+    <string name="slide_4_title">Viel Spaß!</string>
+    <string name="slide_4_desc">Mach was draus!</string>
+
+
 </resources>
