@@ -60,7 +60,7 @@ public class ArtikelListAdapter extends BaseAdapter{
             holder = (ArtikelListAdapter.ViewHolder)convertView.getTag();
         }
         artikel = (Artikel)getItem(position);
-        holder.artikel_view.setText("Name " + artikel.getArtikel() + "    Anzahl " + artikel.getAnzahl());
+        holder.artikel_view.setText("" + artikel.getArtikel() + " (" + artikel.getAnzahl() + ")");
 //        holder.anzahl.setText(artikel.getAnzahl());
         return convertView;
     }
