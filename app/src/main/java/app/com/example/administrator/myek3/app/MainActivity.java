@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity
     List<Artikel> artikelListe;
     ArtikelListAdapter adapter;
     FloatingActionButton fab;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,11 +37,11 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         fab = (FloatingActionButton) findViewById(R.id.fab);
-        artikel = (EditText)findViewById(R.id.input_artikel);
-        anzahl = (EditText)findViewById(R.id.input_anzahl);
-        artikel_liste_view = (ListView)findViewById(R.id.eklist);
+        artikel = (EditText) findViewById(R.id.input_artikel);
+        anzahl = (EditText) findViewById(R.id.input_anzahl);
+        artikel_liste_view = (ListView) findViewById(R.id.eklist);
         registerForContextMenu(artikel_liste_view);
-        adapter = new ArtikelListAdapter(artikelListe,this);
+        adapter = new ArtikelListAdapter(artikelListe, this);
         artikel_liste_view.setAdapter(adapter);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -58,6 +59,11 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View view) {
                 if (artikel.getText().length() > 0) {
                     anzahl.requestFocus();
+                    // Keine Eingabe einer Anzahl setzt diese auf 1
+                    if (anzahl.getText().length() == 0) {
+                        anzahl.setText("1");
+                    }
+                    // Keine Eingabe einer Anzahl setzt diese auf 1
                     artikelListe.add(new Artikel(artikel.getText().toString(), anzahl.getText().toString(), false));
                     adapter.notifyDataSetChanged();
                     Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
@@ -98,7 +104,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.action_scan_ean) {
-         //   Log.d(String.valueOf(id),"Nachricht");
+            //   Log.d(String.valueOf(id),"Nachricht");
             // ToDo Für EAN Scan View Aufruf vorgesehen - falls das Feature angegangen wird
             return true;
         }
