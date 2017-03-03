@@ -63,8 +63,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     // Getting All Articles.
-    public List<Artikel> getArticleList() {
-        List<Artikel> articleList = new ArrayList<Artikel>();
+    public List<Article> getArticleList() {
+        List<Article> articleList = new ArrayList<Article>();
         // Select All Query.
         String selectQuery = "SELECT * FROM " + articles;
         // TODO: Consider handling this process within a try/catch block.
@@ -73,10 +73,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // Looping through all rows and adding to list.
         if (cursor.moveToFirst()) {
             do {
-                Artikel article = new Artikel(cursor.getString(1), cursor.getString(2));
-                // article.setArticleId(Integer.parseInt(cursor.getString(0)));
-                // article.setArtikel(cursor.getString(1));
-                // article.setAnzahl(cursor.getString(2));
+                Article article = new Article(cursor.getString(1), cursor.getString(2));
+                //article.setArticleId(Integer.parseInt(cursor.getString(0)));
+                //article.setArtikel(cursor.getString(1));
+                //article.setAnzahl(cursor.getString(2));
                 // Adding contact to list.
                 articleList.add(article);
             } while (cursor.moveToNext());

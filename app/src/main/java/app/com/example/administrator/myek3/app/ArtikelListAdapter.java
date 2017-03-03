@@ -17,12 +17,12 @@ import java.util.List;
 public class ArtikelListAdapter extends BaseAdapter{
 
     // Attribute
-    private final List<Artikel> artikelList;
+    private final List<Article> artikelList;
     private final LayoutInflater inflater;
-    private Artikel artikel;
+    private Article artikel;
 
     // Konstruktoren
-    public ArtikelListAdapter(List<Artikel> artikelList, Context context){
+    public ArtikelListAdapter(List<Article> artikelList, Context context){
         this.artikelList = artikelList;
         inflater = LayoutInflater.from(context);
     }
@@ -59,8 +59,8 @@ public class ArtikelListAdapter extends BaseAdapter{
         }else{
             holder = (ArtikelListAdapter.ViewHolder)convertView.getTag();
         }
-        artikel = (Artikel)getItem(position);
-        holder.artikel_view.setText("Name " + artikel.getArtikel() + "    Anzahl " + artikel.getAnzahl());
+        artikel = (Article)getItem(position);
+        holder.artikel_view.setText("Name " + artikel.getArticleName() + "    Anzahl " + artikel.getArticleAmount());
 //        holder.anzahl.setText(artikel.getAnzahl());
         return convertView;
     }
@@ -72,6 +72,5 @@ public class ArtikelListAdapter extends BaseAdapter{
  //       EditText einheit;
  //       EditText preis;
  //       EditText kommentar;
-
     }
 }

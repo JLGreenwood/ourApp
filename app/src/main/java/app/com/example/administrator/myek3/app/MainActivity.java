@@ -18,28 +18,34 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+    DatabaseHelper myDB;
     EditText artikel;
     EditText anzahl;
     ListView artikel_liste_view;
-    List<Artikel> artikelListe;
+    List<Article> artikelListe;
     ArtikelListAdapter adapter;
     FloatingActionButton fab;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
-        artikelListe = new ArrayList<Artikel>();
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+
         fab = (FloatingActionButton) findViewById(R.id.fab);
         artikel = (EditText)findViewById(R.id.input_artikel);
         anzahl = (EditText)findViewById(R.id.input_anzahl);
-        artikel_liste_view = (ListView)findViewById(R.id.eklist);
-        registerForContextMenu(artikel_liste_view);
+
+        artikelListe = new ArrayList<Article>();
         adapter = new ArtikelListAdapter(artikelListe,this);
+        artikel_liste_view = (ListView)findViewById(R.id.eklist);
         artikel_liste_view.setAdapter(adapter);
+        registerForContextMenu(artikel_liste_view);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -49,13 +55,15 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (artikel.getText().length() > 0) {
                     anzahl.requestFocus();
-                    artikelListe.add(new Artikel(artikel.getText().toString(), anzahl.getText().toString(), false));
+                    artikelListe.add(new Article(artikel.getText().toString(), anzahl.getText().toString(), 0));
                     adapter.notifyDataSetChanged();
+
                     Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                 }
@@ -64,7 +72,6 @@ public class MainActivity extends AppCompatActivity
                 artikel.requestFocus();
             }
         });
-
     }
 
     @Override
