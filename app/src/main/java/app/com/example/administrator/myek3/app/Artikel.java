@@ -7,7 +7,7 @@ package app.com.example.administrator.myek3.app;
  * ihre Attribute ändern
  */
 
-public class Artikel {
+public class  Artikel {
 
 // Attribute
     private String artikel;
