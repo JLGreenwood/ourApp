@@ -80,10 +80,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     articleAmount.requestFocus();
 
                     if (articleAmount.getText().toString().length() == 0) {
-                        articleList.add(new Article(articleName.getText().toString(), "1", 0));
+                        articleList.add(new Article(articleName.getText().toString(), "1", false));
 
                     } else {
-                        articleList.add(new Article(articleName.getText().toString(), articleAmount.getText().toString(), 0));
+                        articleList.add(new Article(articleName.getText().toString(), articleAmount.getText().toString(), false));
 
                     }
 
