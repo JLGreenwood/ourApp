@@ -1,8 +1,5 @@
 package app.com.example.administrator.myek3.app;
 
-import app.com.example.administrator.myek3.app.Session;
-
-
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -48,8 +45,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
+
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         articleName = (EditText) findViewById(R.id.input_artikel);
@@ -78,19 +75,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onClick(View view) {
                 if (articleName.getText().length() > 0) {
                     articleAmount.requestFocus();
-
-                    if (articleAmount.getText().toString().length() == 0) {
-                        articleList.add(new Article(articleName.getText().toString(), "1", 0));
-
-                    } else {
-                        articleList.add(new Article(articleName.getText().toString(), articleAmount.getText().toString(), 0));
-
+                    String amount = articleAmount.getText().toString();
+                    if(amount.equals("") || amount.equals("0")){
+                       amount = "1";
                     }
-
+                    articleList.add(new Article(articleName.getText().toString(), ""+amount , false));
 
                     adapter.notifyDataSetChanged();
-
-                    Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                    Snackbar.make(view, "Replace with your own action!! " + amount, Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                 }
                 articleName.setText("");
