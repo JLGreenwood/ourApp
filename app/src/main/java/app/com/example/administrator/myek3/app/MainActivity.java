@@ -1,5 +1,6 @@
 package app.com.example.administrator.myek3.app;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -93,8 +94,13 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+
+
+
             return true;
         }
+
+
 
         return super.onOptionsItemSelected(item);
     }
@@ -115,8 +121,12 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_share) {
 
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_help) {
 
+            Session mysession = new Session(this);
+            mysession.setFirstTimeLaunch(true);
+            Intent intent = new Intent(this, WelcomeActivity.class);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
