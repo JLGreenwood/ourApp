@@ -19,10 +19,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /**
- * Created by Akshay Raj on 7/28/2016.
- * Snow Corporation Inc.
- * www.snowcorp.org
+ * Created by Admiral Ackbar
  */
+
 public class WelcomeActivity extends AppCompatActivity {
 
     private ViewPager viewPager;
@@ -31,7 +30,7 @@ public class WelcomeActivity extends AppCompatActivity {
     private TextView[] dots;
     private int[] layouts;
     private Button btnSkip, btnNext;
-    private Session session;
+    public Session session;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

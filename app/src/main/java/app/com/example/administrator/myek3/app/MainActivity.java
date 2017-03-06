@@ -1,6 +1,6 @@
 package app.com.example.administrator.myek3.app;
 
-import android.os.Build;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -10,7 +10,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,76 +19,62 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-
-    DatabaseHelper myDB;
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener {
     EditText artikel;
     EditText anzahl;
     ListView artikel_liste_view;
-    List<Article> artikelListe;
+    List<Artikel> artikelListe;
     ArtikelListAdapter adapter;
     FloatingActionButton fab;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
-
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-
-        artikel = (EditText)findViewById(R.id.input_artikel);
-        anzahl = (EditText)findViewById(R.id.input_anzahl);
-
-        artikelListe = new ArrayList<Article>();
-        adapter = new ArtikelListAdapter(artikelListe,this);
-        artikel_liste_view = (ListView)findViewById(R.id.eklist);
-        artikel_liste_view.setAdapter(adapter);
-        registerForContextMenu(artikel_liste_view);
-
+        artikelListe = new ArrayList<Artikel>();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        artikel = (EditText)findViewById(R.id.input_artikel);
+        anzahl = (EditText)findViewById(R.id.input_anzahl);
+        artikel_liste_view = (ListView)findViewById(R.id.eklist);
+        registerForContextMenu(artikel_liste_view);
+        adapter = new ArtikelListAdapter(artikelListe,this);
+        artikel_liste_view.setAdapter(adapter);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-            drawer.setDrawerListener(toggle);
-        }
+        drawer.setDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Keine Eingabe einer Anzahl setzt diese auf 1
-                if (anzahl.getText().length() == 0) {
-                    anzahl.setText("1");
+                if (artikel.getText().length() > 0) {
+                    anzahl.requestFocus();
+                    artikelListe.add(new Artikel(artikel.getText().toString(), anzahl.getText().toString(), false));
+                    adapter.notifyDataSetChanged();
+                    Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
                 }
-
-                artikelListe.add(new Article(artikel.getText().toString(), anzahl.getText().toString(), 0));
-                adapter.notifyDataSetChanged();
-
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
                 artikel.setText("");
                 anzahl.setText("");
                 artikel.requestFocus();
             }
         });
+
     }
 
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-            if (drawer.isDrawerOpen(GravityCompat.START)) {
-                drawer.closeDrawer(GravityCompat.START);
-            } else {
-                super.onBackPressed();
-            }
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
         }
     }
 
@@ -107,18 +92,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == R.id.action_scan_ean) {
-            //   Log.d(String.valueOf(id),"Nachricht");
-            // ToDo Für EAN Scan View Aufruf vorgesehen - falls das Feature angegangen wird
-            return true;
-        }
-
-
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
 
+
+
             return true;
         }
+
+
 
         return super.onOptionsItemSelected(item);
     }
@@ -139,8 +121,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         } else if (id == R.id.nav_share) {
 
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_help) {
 
+            Session mysession = new Session(this);
+            mysession.setFirstTimeLaunch(true);
+            Intent intent = new Intent(this, WelcomeActivity.class);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
