@@ -1,5 +1,8 @@
 package app.com.example.administrator.myek3.app;
+import app.com.example.administrator.myek3.app.Session;
 
+
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -146,9 +149,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         } else if (id == R.id.nav_share) {
 
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_help) {
 
-        }
+        Session mysession = new Session(this);
+        mysession.setFirstTimeLaunch(true);
+        Intent intent = new Intent(this, WelcomeActivity.class);
+        startActivity(intent);
+    }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

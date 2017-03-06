@@ -26,6 +26,7 @@
 
     <string name="slide_4_title">Viel Spaß!</string>
     <string name="slide_4_desc">Mach was draus!</string>
+    <string name="action_scan_ean">SCAN EAN</string>
 
 
 </resources>
