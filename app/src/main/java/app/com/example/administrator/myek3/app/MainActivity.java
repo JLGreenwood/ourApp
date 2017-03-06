@@ -24,13 +24,13 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    EditText artikel;
-    EditText anzahl;
+    DatabaseHelper myDB;
+    EditText articleName;
+    EditText articleAmount;
     ListView artikel_liste_view;
-    List<Artikel> artikelListe;
+    List<Article> articleList;
     ArtikelListAdapter adapter;
     FloatingActionButton fab;
 
@@ -44,19 +44,21 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
-        artikelListe = new ArrayList<Artikel>();
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        articleName = (EditText)findViewById(R.id.input_artikel);
+        articleAmount = (EditText)findViewById(R.id.input_anzahl);
+
+        articleList = new ArrayList<Article>();
+        adapter = new ArtikelListAdapter(articleList,this);
+        artikel_liste_view = (ListView)findViewById(R.id.eklist);
+        artikel_liste_view.setAdapter(adapter);
+        registerForContextMenu(artikel_liste_view);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        artikel = (EditText) findViewById(R.id.input_artikel);
-        anzahl = (EditText) findViewById(R.id.input_anzahl);
-        artikel_liste_view = (ListView) findViewById(R.id.eklist);
-
-        registerForContextMenu(artikel_liste_view);
-        adapter = new ArtikelListAdapter(artikelListe, this);
-        artikel_liste_view.setAdapter(adapter);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -66,19 +68,21 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (artikel.getText().length() > 0) {
-                    anzahl.requestFocus();
-                    artikelListe.add(new Artikel(artikel.getText().toString(), anzahl.getText().toString(), false));
+                if (articleName.getText().length() > 0) {
+                    articleAmount.requestFocus();
+                    articleList.add(new Article(articleName.getText().toString(), articleAmount.getText().toString(), 0));
                     adapter.notifyDataSetChanged();
+
                     Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                 }
-                artikel.setText("");
-                anzahl.setText("");
-                artikel.requestFocus();
+                articleName.setText("");
+                articleAmount.setText("");
+                articleName.requestFocus();
             }
         });
 
