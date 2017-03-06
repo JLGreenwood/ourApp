@@ -15,7 +15,7 @@ public class Article {
     private String articleUnit;
     private double articlePrice;
     private String articleComment;
-    private int articleStatus;
+    private boolean articleChecked;
 
 // Konstruktoren
     public Article(String articleName){
@@ -25,10 +25,10 @@ public class Article {
         this.articleName = articleName;
         this.articleAmount = articleAmount;
     }
-    public Article(String articleName, String articleAmount, int articleStatus){
+    public Article(String articleName, String articleAmount, boolean articleChecked){
         this.articleName = articleName;
         this.articleAmount = articleAmount;
-        this.articleStatus = articleStatus;
+        this.articleChecked = articleChecked;
     }
     public Article(String articleName, String articleAmount, String articleUnit){
         this.articleName = articleName;
@@ -47,7 +47,6 @@ public class Article {
     public void setArticleName(String articleName){
         this.articleName = articleName;
     }
-
     public void setArticleAmount(String articleAmount) {
         this.articleAmount = articleAmount;
     }
@@ -57,29 +56,24 @@ public class Article {
     public void setArticleComment(String articleComment) {
         this.articleComment = articleComment;
     }
-
-    public void setArticleStatus(int articleStatus) {
-        this.articleStatus = articleStatus;
+    public void setArticleChecked(boolean articleChecked) {
+        this.articleChecked = articleChecked;
     }
 
 // Getter()
     public String getArticleName() {
         return articleName;
     }
-
     public String getArticleAmount() {
         return articleAmount;
     }
-
     public String getArticleUnit() {
         return articleUnit;
     }
-
     public String getArticleComment() {
         return articleComment;
     }
-
-    public int getArticleStatus() {
-        return articleStatus;
+    public boolean isArticleChecked() {
+        return articleChecked;
     }
 }
