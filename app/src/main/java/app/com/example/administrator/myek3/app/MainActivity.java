@@ -1,4 +1,5 @@
 package app.com.example.administrator.myek3.app;
+
 import app.com.example.administrator.myek3.app.Session;
 
 
@@ -51,12 +52,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
-        articleName = (EditText)findViewById(R.id.input_artikel);
-        articleAmount = (EditText)findViewById(R.id.input_anzahl);
+        articleName = (EditText) findViewById(R.id.input_artikel);
+        articleAmount = (EditText) findViewById(R.id.input_anzahl);
 
         articleList = new ArrayList<Article>();
-        adapter = new ArtikelListAdapter(articleList,this);
-        artikel_liste_view = (ListView)findViewById(R.id.eklist);
+        adapter = new ArtikelListAdapter(articleList, this);
+        artikel_liste_view = (ListView) findViewById(R.id.eklist);
         artikel_liste_view.setAdapter(adapter);
         registerForContextMenu(artikel_liste_view);
 
@@ -77,7 +78,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onClick(View view) {
                 if (articleName.getText().length() > 0) {
                     articleAmount.requestFocus();
-                    articleList.add(new Article(articleName.getText().toString(), articleAmount.getText().toString(), 0));
+
+                    if (articleAmount.getText().toString().length() == 0) {
+                        articleList.add(new Article(articleName.getText().toString(), "1", 0));
+
+                    } else {
+                        articleList.add(new Article(articleName.getText().toString(), articleAmount.getText().toString(), 0));
+
+                    }
+
+
                     adapter.notifyDataSetChanged();
 
                     Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
@@ -151,11 +161,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         } else if (id == R.id.nav_help) {
 
-        Session mysession = new Session(this);
-        mysession.setFirstTimeLaunch(true);
-        Intent intent = new Intent(this, WelcomeActivity.class);
-        startActivity(intent);
-    }
+            Session mysession = new Session(this);
+            mysession.setFirstTimeLaunch(true);
+            Intent intent = new Intent(this, WelcomeActivity.class);
+            startActivity(intent);
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
