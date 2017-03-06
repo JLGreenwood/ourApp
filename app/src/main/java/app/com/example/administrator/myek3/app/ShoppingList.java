@@ -5,81 +5,65 @@ import java.util.ArrayList;
 
 /**
  * Created by Darth Vader on 02.03.2017
- * Einkaufslistse implementiert Serializable und kann somit gespeichert werden.
+ * Einkaufsliste implementiert Serializable und kann somit gespeichert werden.
  * Mit der Klasse Einkaufsliste erstellen wir Einkaufslisten-Objekte. Als Attribut hat sie
  * den Listen Namen, eine fortlaufende Listennummer, eine ArrayListe mit den Artikel-Objekten, den Betrag den der Benutzer
  * ausgegeben hat und eine Status Variable.
  * Darüber hinaus hat sie noch Getter() und Setter
  */
 
-public class ShoppingList implements Serializable{
+public class ShoppingList implements Serializable {
     // Attribute
-    private String listenName;
-    private static int listenNummer = 0;
-    private ArrayList<Article> listenArtikel;
-    private String gezahlterBetrag;
-    private boolean status;
+    private String shoppingListName;
+    private ArrayList<Article> shoppingListArticles;
+    private double shoppingListTotalPrice;
+    private boolean shoppingListCompleted;
+//    private static int listenNumber = 0;
 
     // Konstruktor
-    public ShoppingList(String listenName){
-        this.listenName = listenName;
-        this.listenNummer++;
-        this.gezahlterBetrag = "";
-        this.status = false;
+    public ShoppingList(String shoppingListName) {
+        this.shoppingListName = shoppingListName;
+        this.shoppingListTotalPrice = 0.0;
+        this.shoppingListCompleted = false;
     }
-    public ShoppingList(String listenName, ArrayList<Article> listenArtikel){
-        this.listenName = listenName;
-        this.listenNummer++;
-        this.listenArtikel = listenArtikel;
-        this.gezahlterBetrag = "";
-        this.status = false;
+    public ShoppingList(String shoppingListName, ArrayList<Article> shoppingListArticles) {
+        this.shoppingListName = shoppingListName;
+        this.shoppingListArticles = shoppingListArticles;
+        this.shoppingListTotalPrice = 0.0;
+        this.shoppingListCompleted = false;
     }
-    public ShoppingList(String listenName, ArrayList<Article> listenArtikel, String gezahlterBetrag){
-        this.listenName = listenName;
-        this.listenNummer++;
-        this.listenArtikel = listenArtikel;
-        this.gezahlterBetrag = gezahlterBetrag;
-        this.status = false;
+    public ShoppingList(String shoppingListName, ArrayList<Article> shoppingListArticles, double shoppingListTotalPrice) {
+        this.shoppingListName = shoppingListName;
+        this.shoppingListArticles = shoppingListArticles;
+        this.shoppingListTotalPrice = shoppingListTotalPrice;
+        this.shoppingListCompleted = false;
     }
 
-    // Getter()/Setter()
-    public String getListenName() {
-        return listenName;
+    // Setter
+    public void setShoppingListName(String shoppingListName) {
+        this.shoppingListName = shoppingListName;
+    }
+    public void setShoppingListArticles(ArrayList<Article> shoppingListArticles) {
+        this.shoppingListArticles = shoppingListArticles;
+    }
+    public void setShoppingListTotalPrice(double shoppingListTotalPrice) {
+        this.shoppingListTotalPrice = shoppingListTotalPrice;
+    }
+    public void setShoppingListCompleted(boolean shoppingListCompleted) {
+        this.shoppingListCompleted = shoppingListCompleted;
     }
 
-    public static int getListenNummer() {
-        return listenNummer;
+    // Getter
+    public String getShoppingListName() {
+        return shoppingListName;
     }
-
-    public ArrayList<Article> getListenArtikel() {
-        return listenArtikel;
+    public ArrayList<Article> getShoppingListArticles() {
+        return shoppingListArticles;
     }
-
-    public String getGezahlterBetrag() {
-        return gezahlterBetrag;
+    public double getShoppingListTotalPrice() {
+        return shoppingListTotalPrice;
     }
-
-    public boolean isStatus() {
-        return status;
-    }
-
-    public void setListenName(String listenName) {
-        this.listenName = listenName;
-    }
-
-    public static void setListenNummer(int listenNummer) {
-        ShoppingList.listenNummer = listenNummer;
-    }
-
-    public void setListenArtikel(ArrayList<Article> listenArtikel) {
-        this.listenArtikel = listenArtikel;
-    }
-
-    public void setGezahlterBetrag(String gezahlterBetrag) {
-        this.gezahlterBetrag = gezahlterBetrag;
-    }
-
-    public void setStatus(boolean status) {
-        this.status = status;
+    public boolean isShoppingListCompleted() {
+        return shoppingListCompleted;
     }
 }
