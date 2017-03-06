@@ -4,9 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 /**
- * Created by Akshay Raj on 7/28/2016.
- * Snow Corporation Inc.
- * www.snowcorp.org
+ * Created by Admiral Ackbar
  */
 public class Session {
     SharedPreferences pref;

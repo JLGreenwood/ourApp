@@ -17,25 +17,25 @@ import java.util.List;
 public class ArtikelListAdapter extends BaseAdapter{
 
     // Attribute
-    private final List<Article> artikelList;
+    private final List<Article> articleList;
     private final LayoutInflater inflater;
-    private Article artikel;
+    private Article article;
 
     // Konstruktoren
     public ArtikelListAdapter(List<Article> artikelList, Context context){
-        this.artikelList = artikelList;
+        this.articleList = artikelList;
         inflater = LayoutInflater.from(context);
     }
 
     // Getter()/Setter()
     @Override
     public int getCount() {
-        return this.artikelList.size();
+        return this.articleList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return this.artikelList.get(position);
+        return this.articleList.get(position);
     }
 
     @Override
@@ -51,26 +51,17 @@ public class ArtikelListAdapter extends BaseAdapter{
             convertView = inflater.inflate(R.layout.list_item_eklise, parent, false);
             holder = new ArtikelListAdapter.ViewHolder();
             holder.artikel_view = (TextView) convertView.findViewById(R.id.list_item_ekliste_textview);
-//            holder.anzahl = (EditText)convertView.findViewById(R.id.input_anzahl);
-//            holder.einheit = (EditText)convertView.findViewById(R.id.input_einheit);
-//            holder.preis = (EditText)convertView.findViewById(R.id.input_preis);
-//            holder.kommentar = (EditText)convertView.findViewById(R.id.input_kommentar);
             convertView.setTag(holder);
         }else{
             holder = (ArtikelListAdapter.ViewHolder)convertView.getTag();
         }
-        artikel = (Article)getItem(position);
-        holder.artikel_view.setText("Name " + artikel.getArticleName() + "    Anzahl " + artikel.getArticleAmount());
-//        holder.anzahl.setText(artikel.getAnzahl());
+        article = (Article)getItem(position);
+        holder.artikel_view.setText("" + article.getArticleName() + " (" + article.getArticleAmount() + ")");
         return convertView;
     }
 
-    // Innere Klasse
+    // Innere Klasse.
     static class ViewHolder{
         TextView artikel_view;
- //       EditText anzahl;
- //       EditText einheit;
- //       EditText preis;
- //       EditText kommentar;
     }
 }

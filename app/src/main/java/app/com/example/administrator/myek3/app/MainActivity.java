@@ -1,5 +1,7 @@
 package app.com.example.administrator.myek3.app;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -15,32 +17,44 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.api.GoogleApiClient;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     DatabaseHelper myDB;
-    EditText artikel;
-    EditText anzahl;
+    EditText articleName;
+    EditText articleAmount;
     ListView artikel_liste_view;
-    List<Article> artikelListe;
+    List<Article> articleList;
     ArtikelListAdapter adapter;
     FloatingActionButton fab;
+
+    private static final String TAG = MainActivity.class.getSimpleName();
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
 
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        artikel = (EditText)findViewById(R.id.input_artikel);
-        anzahl = (EditText)findViewById(R.id.input_anzahl);
 
-        artikelListe = new ArrayList<Article>();
-        adapter = new ArtikelListAdapter(artikelListe,this);
-        artikel_liste_view = (ListView)findViewById(R.id.eklist);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        articleName = (EditText) findViewById(R.id.input_artikel);
+        articleAmount = (EditText) findViewById(R.id.input_anzahl);
+
+        articleList = new ArrayList<Article>();
+        adapter = new ArtikelListAdapter(articleList, this);
+        artikel_liste_view = (ListView) findViewById(R.id.eklist);
         artikel_liste_view.setAdapter(adapter);
         registerForContextMenu(artikel_liste_view);
 
@@ -59,19 +73,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (artikel.getText().length() > 0) {
-                    anzahl.requestFocus();
-                    artikelListe.add(new Article(artikel.getText().toString(), anzahl.getText().toString(), 0));
-                    adapter.notifyDataSetChanged();
+                if (articleName.getText().length() > 0) {
+                    articleAmount.requestFocus();
+                    String amount = articleAmount.getText().toString();
+                    if(amount.equals("") || amount.equals("0")){
+                       amount = "1";
+                    }
+                    articleList.add(new Article(articleName.getText().toString(), ""+amount , false));
 
-                    Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                    adapter.notifyDataSetChanged();
+                    Snackbar.make(view, "Replace with your own action!! " + amount, Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                 }
-                artikel.setText("");
-                anzahl.setText("");
-                artikel.requestFocus();
+                articleName.setText("");
+                articleAmount.setText("");
+                articleName.requestFocus();
             }
         });
+
+        /**
+         * Initialize an instance of our databaseHelper class and call our methods.
+         */
+        CouchbaseHelper couchbaseHelper = new CouchbaseHelper(this);
+        couchbaseHelper.createArticle();
+        couchbaseHelper.getAllDocuments();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     @Override
@@ -122,12 +151,52 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         } else if (id == R.id.nav_share) {
 
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_help) {
 
+            Session mysession = new Session(this);
+            mysession.setFirstTimeLaunch(true);
+            Intent intent = new Intent(this, WelcomeActivity.class);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    public Action getIndexApiAction() {
+        Thing object = new Thing.Builder()
+                .setName("Main Page") // TODO: Define a title for the content shown.
+                // TODO: Make sure this auto-generated URL is correct.
+                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
+                .build();
+        return new Action.Builder(Action.TYPE_VIEW)
+                .setObject(object)
+                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
+                .build();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        AppIndex.AppIndexApi.start(client, getIndexApiAction());
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        AppIndex.AppIndexApi.end(client, getIndexApiAction());
+        client.disconnect();
     }
 }

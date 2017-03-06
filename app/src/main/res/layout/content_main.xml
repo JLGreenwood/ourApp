@@ -18,20 +18,24 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:focusableInTouchMode="true">
+
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="@string/input_artikel"
+            android:maxWidth="10dp"
             android:id="@+id/input_artikel"
-            android:layout_weight="2"
-        />
+            android:layout_weight="4" />
+
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="@string/input_anzahl"
             android:inputType="number"
+            android:maxWidth="1dp"
+            android:maxLength="8"
             android:id="@+id/input_anzahl"
-            android:layout_weight="2" />
+            android:layout_weight="1" />
     </LinearLayout>
     <ListView
         android:layout_width="match_parent"
