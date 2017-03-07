@@ -3,34 +3,38 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Import" />
+            android:id="@+id/nav_ekl"
+            android:icon="@drawable/ic_ekl"
+            android:title="@string/modul1"
+            android:textSize="14sp" />
         <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery" />
+            android:id="@+id/nav_liste"
+            android:icon="@drawable/ic_list"
+            android:title="@string/modul2"
+            android:textSize="14sp" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
-        <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
+            android:id="@+id/nav_statistik"
+            android:icon="@drawable/ic_stat"
+            android:title="@string/modul3"
+            android:textSize="14sp"/>
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="@string/divider"
+        android:id="@+id/divider"
+        android:textSize="14sp">
         <menu>
             <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
+                android:id="@+id/nav_tut"
+                android:icon="@drawable/ic_help"
+                android:title="@string/hilfe"
+                android:textSize="14sp"/>
             <item
-                android:id="@+id/nav_help"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Hilfe" />
+                android:id="@+id/nav_imp"
+                android:icon="@drawable/ic_group"
+                android:title="@string/wir"
+                android:textSize="14sp"/>
         </menu>
     </item>
 
 </menu>
+
