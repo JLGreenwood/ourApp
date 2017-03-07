@@ -1,6 +1,7 @@
 package app.com.example.administrator.myek3.app;
 
 import android.content.Intent;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -111,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 switch (listViewSwitch) {
                     case "articles":
                         if (articleName.getText().length() > 0) {
@@ -132,7 +134,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     case "shoppingLists":
 
                         break;
+
                 }
+            }
+        });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Article art = articleList.get(position);
+
+                if (art.isArticleChecked()) {
+
+                    art.setArticleChecked(false);
+                    articleAdapter.notifyDataSetChanged();
+
+                }
+                else {
+                    art.setArticleChecked(true);
+                    articleAdapter.notifyDataSetChanged();
+                }
+
             }
         });
 
