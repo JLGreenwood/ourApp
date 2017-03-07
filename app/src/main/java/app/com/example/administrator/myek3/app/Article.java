@@ -20,6 +20,15 @@ public class Article {
     private boolean articleChecked;
 
 // Konstruktoren
+    public Article() {
+        this.articleName = null;
+        this.articleAmount = null;
+        this.articleUnit = null;
+        this.articlePrice = 0.0;
+        this.articleComment = null;
+        this.articleChecked = false;
+    }
+
     public Article(String articleName){
         this.articleName = articleName;
     }
@@ -45,6 +54,15 @@ public class Article {
         this.articleComment = articleComment;
     }
 
+//    public Article(String articleAmount, String articleUnit, String articleComment, String articleName, boolean articleChecked){
+//        this.articleName = articleName;
+//        this.articleAmount = articleAmount;
+//        this.articleUnit = articleUnit;
+//        this.articleChecked = articleChecked;
+//        this.articleComment = articleComment;
+//    }
+
+
     // Setter()
     public void setArticleName(String articleName){
         this.articleName = articleName;
@@ -60,6 +78,9 @@ public class Article {
     }
     public void setArticleChecked(boolean articleChecked) {
         this.articleChecked = articleChecked;
+    }
+    public void setArticlePrice(double articlePrice) {
+        this.articlePrice = articlePrice;
     }
 
 // Getter()

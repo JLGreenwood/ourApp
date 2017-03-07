@@ -19,6 +19,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import static android.R.attr.key;
+
 public class CouchbaseHelper {
 
     Manager manager = null;
@@ -101,6 +103,116 @@ public class CouchbaseHelper {
     }
 
     /**
+     * Returns a given shopping list by its given id.
+     * @param id
+     * @return
+     */
+    public ShoppingList getShoppingListById(String id) {
+
+        String listName = null;
+        List<Article> articleList = new ArrayList<Article>();
+        ShoppingList shoppingList;
+
+        Log.d(TAG, "Calling getShoppingListById: " + id);
+        Document doc = database.getDocument(id);
+        Log.d(TAG, "Doc: " + doc);
+        Map<String, Object> properties = doc.getProperties();
+        Log.d(TAG, "Document properties: " + properties);
+        for(Map.Entry<String, Object> entry : properties.entrySet()) {
+            Log.d(TAG, "Key => " + entry.getKey());
+            Log.d(TAG, "Value => " + entry.getValue());
+            if(entry.getKey() != "_id" && entry.getKey() != "_rev") {
+                Log.d(TAG, "List name: " + entry.getKey());
+                listName = entry.getKey();
+            }
+        }
+
+        /**
+         * Working example for shoppinglists. Fix Object state!
+         */
+//        Map<ShoppingList, ArrayList<Article>> myShoppingList = (Map<ShoppingList, ArrayList<Article>>) doc.getProperty("BananaList001");
+//        Log.d(TAG, "ShoppingList: " + myShoppingList);
+
+        Map<ShoppingList, ArrayList<Article>> myShoppingList = (Map<ShoppingList, ArrayList<Article>>) doc.getProperty("BananaList001");
+        Log.d(TAG, "ShoppingList: " + myShoppingList);
+
+
+//        ArrayList<Article> myArraylist = ArrayList<Article> myShoppingList.get("shoppingListArticles");
+
+
+        /**
+         * ArrayList of Articles.
+         */
+        Log.d(TAG, "Shopping list Articles class => " + myShoppingList.get("shoppingListArticles").getClass());
+
+//        Object art1 = myShoppingList.get("shoppingListArticles").get(0);
+//        Log.d(TAG, "art1: " + art1.toString());
+//        Log.d(TAG, "art1: " + art1.getClass());
+
+//        Map<String, Object> articleMap1 = (Map<String, Object>) art1;
+//        Log.d(TAG, "articleMap1: " + articleMap1.toString());
+//        Log.d(TAG, "articleMap1: " + articleMap1.getClass());
+
+
+//        for(int i = 0; i < myShoppingList.get("shoppingListArticles").size(); i++) {
+//
+//            Object art11 = myShoppingList.get("shoppingListArticles").get(i);
+//            Map<String, Object> articleMap1 = (Map<String, Object>) art11;
+//            String s = articleMap1.;
+//            Object test11 = ((Map<String, Object>) art11).get("articleName");
+//
+//            Log.d(TAG, "art11:::::::::: " + art11.getClass());
+//        }
+
+
+
+
+        for(Object art : myShoppingList.get("shoppingListArticles")) {
+            Log.d(TAG, "================== Article in myShoppingList ==================");
+            Log.d(TAG, "art :: " + art);
+            Log.d(TAG, "art 2 string:: " + art.toString());
+            Log.d(TAG, "art getClass:: " + art.getClass());
+
+            Map<String, Object> articleMap = (Map<String, Object>) art;
+            for(Map.Entry<String, Object> entry : articleMap.entrySet()) {
+
+                Article article = new Article();
+
+                if(entry.getKey().equals("articleName") ) {
+                    Log.d(TAG, "articleName: " + entry.getValue());
+                    article.setArticleName(entry.getValue().toString());
+                }
+                if(entry.getKey() == "articleAmount") {
+                    Log.d(TAG, "articleAmount: " + entry.getValue());
+                    article.setArticleAmount((String) entry.getValue());
+                }
+                if(entry.getKey() == "articleUnit") {
+                    Log.d(TAG, "articleUnit: " + entry.getValue());
+                    article.setArticleUnit((String) entry.getValue());
+                }
+                if(entry.getKey() == "articlePrice") {
+                    Log.d(TAG, "articlePrice: " + entry.getValue());
+                    article.setArticlePrice((Double) entry.getValue());
+                }
+                if(entry.getKey() == "articleComment") {
+                    Log.d(TAG, "articleComment: " + entry.getValue());
+                    article.setArticleComment((String) entry.getValue());
+                }
+                if(entry.getKey() == "articleChecked") {
+                    Log.d(TAG, "articleChecked: " + entry.getValue());
+                    article.setArticleChecked((Boolean) entry.getValue());
+                }
+                Log.d(TAG, "EXCEPTION LOG: " + article.getArticleName());
+                if(article.getArticleName() != null) {
+                    articleList.add(article);
+                }
+            }
+        }
+        shoppingList = new ShoppingList(listName, (ArrayList<Article>) articleList);
+        return shoppingList;
+    }
+
+    /**
      * This is an example on how to work on all existing documents which might be interesting
      * when working operations on the whole collection.
      */
@@ -122,19 +234,19 @@ public class CouchbaseHelper {
             if(row.getDocumentId() != null) {
                 Document doc = database.getDocument(row.getDocumentId());
                 // We can directly access properties from the document object.
-                Log.d(TAG, "Print object by property: " + doc.getProperty("BananaList001"));
+                Log.d(TAG, "doc.getProperty(\"BananaList001\") " + doc.getProperty("BananaList001"));
 
                 Map<ShoppingList, ArrayList<Article>> testObject = (Map<ShoppingList, ArrayList<Article>>) doc.getProperty("BananaList001");
                 Log.d(TAG, "TESTOBJECT: " + testObject.getClass());
                 /**
-                 * Returns a List?? of articles.
+                 * Returns a java.util.ArrayList of articles.
                  */
                 Log.d(TAG, "TESTOBJECT get shoppingListArticles: " + testObject.get("shoppingListArticles"));
-                Log.d(TAG, "TESTOBJECT get shoppingListArticles: " + testObject.get("shoppingListArticles").getClass());
+//                Log.d(TAG, "TESTOBJECT get shoppingListArticles: " + testObject.get("shoppingListArticles").getClass());
 
-                ArrayList<Article> testArticleList = testObject.get("shoppingListArticles");
-                ShoppingList recreatedShoppingList = new ShoppingList("TESTSHOPPINGLIST", testObject.get("shoppingListArticles"));
-                addShoppingList(recreatedShoppingList);
+//                ArrayList<Article> testArticleList = testObject.get("shoppingListArticles");
+//                ShoppingList recreatedShoppingList = new ShoppingList("TESTSHOPPINGLIST", testObject.get("shoppingListArticles"));
+//                addShoppingList(recreatedShoppingList);
             }
         }
     }

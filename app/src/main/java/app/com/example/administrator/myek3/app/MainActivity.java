@@ -11,6 +11,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,9 +35,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ListView listView;
 
     ShoppingList shoppingList;
+    ShoppingList bastisShoppingList;
 
     //    String listViewSwitch = "articles";
-    //    String listViewSwitch = "shoppingLists";
+//    String listViewSwitch = "shoppingLists";
     String listViewSwitch = "articles";
 
     List<Article> articleList;
@@ -63,12 +65,35 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         articleName = (EditText) findViewById(R.id.input_artikel);
         articleAmount = (EditText) findViewById(R.id.input_anzahl);
 
+        /**
+         * Initialize database helper.
+         */
+        CouchbaseHelper couchbaseHelper = new CouchbaseHelper(this);
+
+        /**
+         * Create articles, add them to a list and then insert them into the database.
+         */
+        Article article1 = new Article("Worst", "10");
+        Article article2 = new Article("Brot", "5");
+        Article article3 = new Article("Rose", "1", true);
+        articleList = new ArrayList<Article>();
+        articleList.add(article1);
+        articleList.add(article2);
+        articleList.add(article3);
+        shoppingList = new ShoppingList("BananaList001", (ArrayList<Article>) articleList);
+//        couchbaseHelper.addShoppingList(shoppingList);
+
+        /**
+         * Retrieve shopping list by its given id.
+         */
+        bastisShoppingList = (ShoppingList) couchbaseHelper.getShoppingListById("569f3a43-a9a3-4445-ae78-d509f0087dc1");
+
         switch (listViewSwitch) {
             case "articles":
                 articleName.setVisibility(View.VISIBLE);
                 articleAmount.setVisibility(View.VISIBLE);
                 articleList = new ArrayList<Article>();
-                articleAdapter = new ArticleAdapter(articleList, this);
+                articleAdapter = new ArticleAdapter(bastisShoppingList.getShoppingListArticles(), this);
                 listView.setAdapter(articleAdapter);
                 break;
             case "shoppingLists":
@@ -78,12 +103,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 shoppingListAdapter = new ShoppingListAdapter(shoppingListList, this);
                 listView.setAdapter(shoppingListAdapter);
 
-                ShoppingList unsavedShoppingList1 = new ShoppingList();
+//                ShoppingList unsavedShoppingList1 = new ShoppingList();
                 ShoppingList unsavedShoppingList2 = new ShoppingList("Party");
                 ShoppingList unsavedShoppingList3 = new ShoppingList("Kuchenrezept");
                 ShoppingList unsavedShoppingList4 = new ShoppingList();
 
-                shoppingListList.add(unsavedShoppingList1);
+//                shoppingListList.add(bastisShoppingList);
                 shoppingListList.add(unsavedShoppingList2);
                 shoppingListList.add(unsavedShoppingList3);
                 shoppingListList.add(unsavedShoppingList4);
@@ -133,30 +158,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        /**
-         * Initialize an instance of our databaseHelper class and call our methods.
-         */
-        CouchbaseHelper couchbaseHelper = new CouchbaseHelper(this);
-//        couchbaseHelper.createArticle();
-
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-
-        articleList = new ArrayList<Article>();
-
-        Article article1 = new Article("Worst", "10");
-        Article article2 = new Article("Brot", "5");
-        Article article3 = new Article("Rose", "1");
-
-        articleList.add(article1);
-        articleList.add(article2);
-        articleList.add(article3);
-
-        shoppingList = new ShoppingList("BananaList001", (ArrayList<Article>) articleList);
-
-        couchbaseHelper.addShoppingList(shoppingList);
-        couchbaseHelper.getAllDocuments();
     }
 
     @Override

@@ -68,6 +68,9 @@ public class ShoppingList implements Serializable {
     public ArrayList<Article> getShoppingListArticles() {
         return shoppingListArticles;
     }
+    public Article getShoppingListArticleById(int position) {
+        return this.shoppingListArticles.get(position);
+    }
     public int getShoppingListArticleCount() {
         return shoppingListArticles.size();
     }
