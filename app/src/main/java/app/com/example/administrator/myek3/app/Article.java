@@ -1,5 +1,7 @@
 package app.com.example.administrator.myek3.app;
 
+import android.util.Log;
+
 /**
  * Created by Darth Vader on 28.02.2017.
  * Die Klasse Artikel erstellt Produkt Objekte für die Einkaufslite her.
@@ -43,7 +45,7 @@ public class Article {
         this.articleComment = articleComment;
     }
 
-// Setter()
+    // Setter()
     public void setArticleName(String articleName){
         this.articleName = articleName;
     }

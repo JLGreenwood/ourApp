@@ -33,9 +33,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     FloatingActionButton fab;
     ListView listView;
 
+    ShoppingList shoppingList;
+
     //    String listViewSwitch = "articles";
     //    String listViewSwitch = "shoppingLists";
-    String listViewSwitch = "articles";
+    String listViewSwitch = "shoppingLists";
 
     List<Article> articleList;
     List<ShoppingList> shoppingListList;
@@ -135,12 +137,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
          * Initialize an instance of our databaseHelper class and call our methods.
          */
         CouchbaseHelper couchbaseHelper = new CouchbaseHelper(this);
-        couchbaseHelper.createArticle();
-        couchbaseHelper.getAllDocuments();
+//        couchbaseHelper.createArticle();
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+
+//        Article article1 = new Article("Worst", "10");
+//        Article article2 = new Article("Brot", "5");
+//        Article article3 = new Article("Rose", "1");
+//
+//        articleList.add(article1);
+//        articleList.add(article2);
+//        articleList.add(article3);
+//
+//        shoppingList = new ShoppingList("BananaList001", articleList);
+
+//        couchbaseHelper.addShoppingList(shoppingList);
+//        couchbaseHelper.getAllDocuments();
     }
 
     @Override
