@@ -2,6 +2,7 @@ package app.com.example.administrator.myek3.app;
 
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -12,12 +13,14 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.ContextMenu;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
-
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
@@ -94,8 +97,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 shoppingListAdapter.notifyDataSetChanged();
                 break;
+
         }
-        registerForContextMenu(listView);
+             registerForContextMenu(listView);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -112,6 +116,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 switch (listViewSwitch) {
                     case "articles":
                         if (articleName.getText().length() > 0) {
@@ -133,7 +138,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     case "shoppingLists":
 
                         break;
+
                 }
+            }
+        });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Article art = articleList.get(position);
+
+                if (art.isArticleChecked()) {
+
+                    art.setArticleChecked(false);
+                    articleAdapter.notifyDataSetChanged();
+
+                }
+                else {
+                    art.setArticleChecked(true);
+                    articleAdapter.notifyDataSetChanged();
+                }
+
             }
         });
 
@@ -160,6 +186,35 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //        couchbaseHelper.addShoppingList(shoppingList);
 //        couchbaseHelper.getAllDocuments();
     }
+
+
+    // LONGP PRESURE GESTURE  // LONGP PRESURE GESTURE  // LONGP PRESURE GESTURE
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_context_menu, menu);
+    }
+
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        switch (item.getItemId())
+        {
+            case R.id.delete_id:
+                articleList.remove(info.position);
+                articleAdapter.notifyDataSetChanged();
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
+
+
+    }
+ // END LONGP PRESURE GESTURE  // END LONGP PRESURE GESTURE // END LONGP PRESURE GESTURE
+
 
     @Override
     public void onBackPressed() {

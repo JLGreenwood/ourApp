@@ -1,6 +1,7 @@
 package app.com.example.administrator.myek3.app;
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ public class ArticleAdapter extends BaseAdapter{
     public ArticleAdapter(List<Article> articleList, Context context){
         this.articleList = articleList;
         inflater = LayoutInflater.from(context);
+
     }
 
     // Getter()/Setter()
@@ -56,13 +58,28 @@ public class ArticleAdapter extends BaseAdapter{
             holder = (ArticleAdapter.ViewHolder)convertView.getTag();
         }
         article = (Article)getItem(position);
+
+        holder.articleView.setText("" + article.getArticleName() + " (" + article.getArticleAmount() + ")");
+        holder.a = article.isArticleChecked();
+
+        if (this.articleList.get(position).isArticleChecked()) {
+            holder.articleView.setPaintFlags(holder.articleView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        }
+        else {
+            holder.articleView.setPaintFlags(0);
+
+        }
+
+
         holder.articleView.setText("" + article.getArticleName() + " (" + article.getArticleAmount() + ")");
         return convertView;
+
     }
 
     // Innere Klasse.
     static class ViewHolder{
         TextView articleView;
+        boolean a ;
 
     }
 }
