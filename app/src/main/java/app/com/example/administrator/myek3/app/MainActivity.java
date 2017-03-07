@@ -1,5 +1,9 @@
 package app.com.example.administrator.myek3.app;
 
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.ActivityNotFoundException;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,6 +13,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -16,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -26,6 +32,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+    /*EAN sproch beginn*/
+
+    static final String SCAN = "com.google.zxing.client.android.SCAN";
+    /*EAN sproch end*/
+
 
     EditText articleName;
     EditText articleAmount;
@@ -253,4 +264,82 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
         client.disconnect();
     }
+
+
+
+
+
+
+
+    /* EAN CODE cproch beginn */
+
+    public void ScanBar(View v){
+
+
+        try{
+            Intent in = new Intent (SCAN);
+            in.putExtra("SCAN_MODE", "PRODUCT_MODE");
+            startActivityForResult(in, 0);
+        }catch (ActivityNotFoundException e) {
+            // TODO: handle exception
+            showDialog(MainActivity.this, "No Scanner Found", "Download a scanner code activity?", "Yes", "No").show();
+        }
+    }
+
+    public void ScanQR(View v){
+
+        try{
+            Intent in = new Intent (SCAN);
+            in.putExtra("SCAN_MODE", "QR_CODE_MODE");
+            startActivityForResult(in, 0);
+        }catch (ActivityNotFoundException e) {
+            // TODO: handle exception
+            showDialog(MainActivity.this, "No Scanner Found", "Download a scanner code activity?", "Yes", "No").show();
+        }
+    }
+
+    private Dialog showDialog(final Activity act, CharSequence title,
+                              CharSequence message, CharSequence Yes, CharSequence No) {
+        // TODO Auto-generated method stub
+
+        AlertDialog.Builder download = new AlertDialog.Builder(act);
+        download.setTitle(title);
+        download.setMessage(message);
+        download.setPositiveButton(Yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int i){
+                // TODO Auto-generated method stub
+                Uri uri = Uri.parse("market://search?q=pname:" + "com.google.zxing.client.android");
+                Intent in = new Intent(Intent.ACTION_VIEW, uri);
+                try{
+                    act.startActivity(in);
+                }catch(ActivityNotFoundException anfe){
+
+                }
+            }
+        });
+        download.setNegativeButton(No, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int i) {
+                // TODO Auto-generated method stub
+            }
+        });
+        return download.show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent in) {
+        // TODO Auto-generated method stub
+        if(requestCode ==0){
+            if(resultCode == RESULT_OK){
+                String contents = in.getStringExtra("SCAN_RESULT");
+                String format =  in.getStringExtra("SCAN_RESULT_FORMAT") ;
+                Toast toast = Toast.makeText(this, "Content:" + contents + " Format:" + format, Toast.LENGTH_LONG);
+                toast.show();
+            }
+        }
+    }
+
+    /* EAN CODE cproch end */
+
 }
