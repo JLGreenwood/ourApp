@@ -14,16 +14,16 @@ import java.util.List;
  * ArtikelListAdapter
  */
 
-public class ArtikelListAdapter extends BaseAdapter{
+public class ArticleAdapter extends BaseAdapter{
 
     // Attribute
+    private Article article;
     private final List<Article> articleList;
     private final LayoutInflater inflater;
-    private Article article;
 
     // Konstruktoren
-    public ArtikelListAdapter(List<Article> artikelList, Context context){
-        this.articleList = artikelList;
+    public ArticleAdapter(List<Article> articleList, Context context){
+        this.articleList = articleList;
         inflater = LayoutInflater.from(context);
     }
 
@@ -45,23 +45,24 @@ public class ArtikelListAdapter extends BaseAdapter{
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        final ArtikelListAdapter.ViewHolder holder;
+        final ArticleAdapter.ViewHolder holder;
 
-       if(convertView == null){
+       if (convertView == null) {
             convertView = inflater.inflate(R.layout.list_item_eklise, parent, false);
-            holder = new ArtikelListAdapter.ViewHolder();
-            holder.artikel_view = (TextView) convertView.findViewById(R.id.list_item_ekliste_textview);
+            holder = new ArticleAdapter.ViewHolder();
+            holder.articleView = (TextView) convertView.findViewById(R.id.list_item_ekliste_textview);
             convertView.setTag(holder);
-        }else{
-            holder = (ArtikelListAdapter.ViewHolder)convertView.getTag();
+        } else {
+            holder = (ArticleAdapter.ViewHolder)convertView.getTag();
         }
         article = (Article)getItem(position);
-        holder.artikel_view.setText("" + article.getArticleName() + " (" + article.getArticleAmount() + ")");
+        holder.articleView.setText("" + article.getArticleName() + " (" + article.getArticleAmount() + ")");
         return convertView;
     }
 
     // Innere Klasse.
     static class ViewHolder{
-        TextView artikel_view;
+        TextView articleView;
+
     }
 }

@@ -27,13 +27,21 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    DatabaseHelper myDB;
     EditText articleName;
     EditText articleAmount;
-    ListView artikel_liste_view;
-    List<Article> articleList;
-    ArtikelListAdapter adapter;
+
     FloatingActionButton fab;
+    ListView listView;
+
+    //    String listViewSwitch = "articles";
+    //    String listViewSwitch = "shoppingLists";
+    String listViewSwitch = "articles";
+
+    List<Article> articleList;
+    List<ShoppingList> shoppingListList;
+    ArticleAdapter articleAdapter;
+    ShoppingListAdapter shoppingListAdapter;
+
 
     private static final String TAG = MainActivity.class.getSimpleName();
     /**
@@ -47,16 +55,41 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         fab = (FloatingActionButton) findViewById(R.id.fab);
+        listView = (ListView) findViewById(R.id.eklist);
+
         articleName = (EditText) findViewById(R.id.input_artikel);
         articleAmount = (EditText) findViewById(R.id.input_anzahl);
 
-        articleList = new ArrayList<Article>();
-        adapter = new ArtikelListAdapter(articleList, this);
-        artikel_liste_view = (ListView) findViewById(R.id.eklist);
-        artikel_liste_view.setAdapter(adapter);
-        registerForContextMenu(artikel_liste_view);
+        switch (listViewSwitch) {
+            case "articles":
+                articleName.setVisibility(View.VISIBLE);
+                articleAmount.setVisibility(View.VISIBLE);
+                articleList = new ArrayList<Article>();
+                articleAdapter = new ArticleAdapter(articleList, this);
+                listView.setAdapter(articleAdapter);
+                break;
+            case "shoppingLists":
+                articleName.setVisibility(View.INVISIBLE);
+                articleAmount.setVisibility(View.INVISIBLE);
+                shoppingListList = new ArrayList<ShoppingList>();
+                shoppingListAdapter = new ShoppingListAdapter(shoppingListList, this);
+                listView.setAdapter(shoppingListAdapter);
+
+                ShoppingList unsavedShoppingList1 = new ShoppingList();
+                ShoppingList unsavedShoppingList2 = new ShoppingList("Party");
+                ShoppingList unsavedShoppingList3 = new ShoppingList("Kuchenrezept");
+                ShoppingList unsavedShoppingList4 = new ShoppingList();
+
+                shoppingListList.add(unsavedShoppingList1);
+                shoppingListList.add(unsavedShoppingList2);
+                shoppingListList.add(unsavedShoppingList3);
+                shoppingListList.add(unsavedShoppingList4);
+
+                shoppingListAdapter.notifyDataSetChanged();
+                break;
+        }
+        registerForContextMenu(listView);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -73,21 +106,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (articleName.getText().length() > 0) {
-                    articleAmount.requestFocus();
-                    String amount = articleAmount.getText().toString();
-                    if(amount.equals("") || amount.equals("0")){
-                       amount = "1";
-                    }
-                    articleList.add(new Article(articleName.getText().toString(), ""+amount , false));
+                switch (listViewSwitch) {
+                    case "articles":
+                        if (articleName.getText().length() > 0) {
+                            articleAmount.requestFocus();
+                            String amount = articleAmount.getText().toString();
+                            if (amount.equals("") || amount.equals("0")) {
+                                amount = "1";
+                            }
+                            articleList.add(new Article(articleName.getText().toString(), amount , false));
 
-                    adapter.notifyDataSetChanged();
-                    Snackbar.make(view, "Replace with your own action!! " + amount, Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
+                            articleAdapter.notifyDataSetChanged();
+                            Snackbar.make(view, "Replace with your own action!! " + amount, Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null).show();
+                        }
+                        articleName.setText("");
+                        articleAmount.setText("");
+                        articleName.requestFocus();
+                        break;
+                    case "shoppingLists":
+
+                        break;
                 }
-                articleName.setText("");
-                articleAmount.setText("");
-                articleName.requestFocus();
             }
         });
 
