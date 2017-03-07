@@ -31,7 +31,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     EditText articleName;
     EditText articleAmount;
     ListView artikel_liste_view;
-    List<Article> articleList;
+    ArrayList<Article> articleList;
+    ShoppingList shoppingList;
     ArtikelListAdapter adapter;
     FloatingActionButton fab;
 
@@ -95,12 +96,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
          * Initialize an instance of our databaseHelper class and call our methods.
          */
         CouchbaseHelper couchbaseHelper = new CouchbaseHelper(this);
-        couchbaseHelper.createArticle();
-        couchbaseHelper.getAllDocuments();
+//        couchbaseHelper.createArticle();
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+
+        Article article1 = new Article("Worst", "10");
+        Article article2 = new Article("Brot", "5");
+        Article article3 = new Article("Rose", "1");
+
+        articleList.add(article1);
+        articleList.add(article2);
+        articleList.add(article3);
+
+        shoppingList = new ShoppingList("BananaList001", articleList);
+
+        couchbaseHelper.addShoppingList(shoppingList);
+        couchbaseHelper.getAllDocuments();
     }
 
     @Override
