@@ -143,17 +143,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
-//        Article article1 = new Article("Worst", "10");
-//        Article article2 = new Article("Brot", "5");
-//        Article article3 = new Article("Rose", "1");
-//
-//        articleList.add(article1);
-//        articleList.add(article2);
-//        articleList.add(article3);
-//
-//        shoppingList = new ShoppingList("BananaList001", articleList);
+        articleList = new ArrayList<Article>();
 
-//        couchbaseHelper.addShoppingList(shoppingList);
+        Article article1 = new Article("Worst", "10");
+        Article article2 = new Article("Brot", "5");
+        Article article3 = new Article("Rose", "1");
+
+        articleList.add(article1);
+        articleList.add(article2);
+        articleList.add(article3);
+
+        shoppingList = new ShoppingList("BananaList001", (ArrayList<Article>) articleList);
+
+        couchbaseHelper.addShoppingList(shoppingList);
 //        couchbaseHelper.getAllDocuments();
     }
 
