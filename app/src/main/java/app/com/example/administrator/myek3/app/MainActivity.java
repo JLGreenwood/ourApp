@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         }
                         articleName.setText("");
                         articleAmount.setText("");
-                        articleName.requestFocus();
+                        articleAmount.requestFocus();
                         break;
                     case "shoppingLists":
 
@@ -310,4 +310,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
         client.disconnect();
     }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        Snackbar.make(findViewById(R.id.content_main), "Replace with your own action!! " , Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show();
+
+    }
+    @Override
+    public void onResume(){
+        super.onResume();
+        Snackbar.make(findViewById(R.id.content_main), "onResume " , Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show();
+
+    }
+
 }
