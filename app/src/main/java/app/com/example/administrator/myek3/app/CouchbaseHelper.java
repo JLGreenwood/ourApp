@@ -152,10 +152,10 @@ public class CouchbaseHelper {
 //
 //            Object art11 = myShoppingList.get("shoppingListArticles").get(i);
 //            Map<String, Object> articleMap1 = (Map<String, Object>) art11;
-////            String amount = (String) articleMap1.get("articleAmount");
-////            String name = (String) articleMap1.get("articleName");
-////            String comment = (String) articleMap1.get("articleComment");
-////            Double price = (Double) articleMap1.get("articlePrice");
+//            String amount = (String) articleMap1.get("articleAmount");
+//            String name = (String) articleMap1.get("articleName");
+//            String comment = (String) articleMap1.get("articleComment");
+//            Double price = (Double) articleMap1.get("articlePrice");
 //            Article artikel = new Article(
 //                    (String) articleMap1.get("articleName"),
 //                    (String) articleMap1.get("articleAmount"),
@@ -201,9 +201,6 @@ public class CouchbaseHelper {
                 if(entry.getKey() == "articleChecked") {
                     Log.d(TAG, "articleChecked: " + entry.getValue());
                     article.setArticleChecked((Boolean) entry.getValue());
-                }
-                Log.d(TAG, "EXCEPTION LOG: " + article.getArticleName());
-                if(article.getArticleName() != null && article.getArticleAmount() != null) {
                 }
             }
             articleList.add(article);
