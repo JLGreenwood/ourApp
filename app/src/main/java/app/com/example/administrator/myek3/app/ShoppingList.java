@@ -2,6 +2,8 @@ package app.com.example.administrator.myek3.app;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
+import java.text.DateFormat;
 
 /**
  * Created by Darth Vader on 02.03.2017
@@ -21,6 +23,12 @@ public class ShoppingList implements Serializable {
 //    private static int listenNumber = 0;
 
     // Konstruktor
+    public ShoppingList() {
+        //this.shoppingListName = new SimpleDateFormat("E yyyy.MM.dd 'at' hh:mm:ss a zzz").format(new Date()).toString();
+        this.shoppingListName = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(new Date());
+        this.shoppingListTotalPrice = 0.0;
+        this.shoppingListCompleted = false;
+    }
     public ShoppingList(String shoppingListName) {
         this.shoppingListName = shoppingListName;
         this.shoppingListTotalPrice = 0.0;
@@ -59,6 +67,9 @@ public class ShoppingList implements Serializable {
     }
     public ArrayList<Article> getShoppingListArticles() {
         return shoppingListArticles;
+    }
+    public int getShoppingListArticleCount() {
+        return shoppingListArticles.size();
     }
     public double getShoppingListTotalPrice() {
         return shoppingListTotalPrice;
