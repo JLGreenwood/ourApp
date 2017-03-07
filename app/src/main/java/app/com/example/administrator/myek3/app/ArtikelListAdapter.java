@@ -1,10 +1,13 @@
 package app.com.example.administrator.myek3.app;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import java.util.List;
@@ -25,6 +28,7 @@ public class ArtikelListAdapter extends BaseAdapter{
     public ArtikelListAdapter(List<Article> artikelList, Context context){
         this.articleList = artikelList;
         inflater = LayoutInflater.from(context);
+
     }
 
     // Getter()/Setter()
@@ -57,11 +61,26 @@ public class ArtikelListAdapter extends BaseAdapter{
         }
         article = (Article)getItem(position);
         holder.artikel_view.setText("" + article.getArticleName() + " (" + article.getArticleAmount() + ")");
+        holder.a = article.isArticleChecked();
+
+        if (this.articleList.get(position).isArticleChecked()) {
+            holder.artikel_view.setPaintFlags(holder.artikel_view.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        }
+        else {
+            holder.artikel_view.setPaintFlags(0);
+
+        }
+
         return convertView;
+
     }
 
     // Innere Klasse.
     static class ViewHolder{
         TextView artikel_view;
+        boolean a ;
+
+
+
     }
 }

@@ -4,6 +4,7 @@ import app.com.example.administrator.myek3.app.Session;
 
 
 import android.content.Intent;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -17,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -96,6 +98,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 articleName.setText("");
                 articleAmount.setText("");
                 articleName.requestFocus();
+            }
+        });
+
+        artikel_liste_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Article art = articleList.get(position);
+
+                if (art.isArticleChecked()) {
+
+                    art.setArticleChecked(false);
+                    adapter.notifyDataSetChanged();
+
+                }
+                else {
+                    art.setArticleChecked(true);
+                    adapter.notifyDataSetChanged();
+                }
+
             }
         });
 
