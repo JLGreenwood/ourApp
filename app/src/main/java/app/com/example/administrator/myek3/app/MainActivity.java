@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     //    String listViewSwitch = "articles";
     //    String listViewSwitch = "shoppingLists";
-    String listViewSwitch = "articles";
+    String listViewSwitch = "";
 
     List<Article> articleList;
     List<ShoppingList> shoppingListList;
@@ -72,30 +72,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         switch (listViewSwitch) {
             case "articles":
-                articleName.setVisibility(View.VISIBLE);
-                articleAmount.setVisibility(View.VISIBLE);
-                articleList = new ArrayList<Article>();
-                articleAdapter = new ArticleAdapter(articleList, this);
-                listView.setAdapter(articleAdapter);
+                switchListViewToArticles();
                 break;
             case "shoppingLists":
-                articleName.setVisibility(View.INVISIBLE);
-                articleAmount.setVisibility(View.INVISIBLE);
-                shoppingListList = new ArrayList<ShoppingList>();
-                shoppingListAdapter = new ShoppingListAdapter(shoppingListList, this);
-                listView.setAdapter(shoppingListAdapter);
-
-                ShoppingList unsavedShoppingList1 = new ShoppingList();
-                ShoppingList unsavedShoppingList2 = new ShoppingList("Party");
-                ShoppingList unsavedShoppingList3 = new ShoppingList("Kuchenrezept");
-                ShoppingList unsavedShoppingList4 = new ShoppingList();
-
-                shoppingListList.add(unsavedShoppingList1);
-                shoppingListList.add(unsavedShoppingList2);
-                shoppingListList.add(unsavedShoppingList3);
-                shoppingListList.add(unsavedShoppingList4);
-
-                shoppingListAdapter.notifyDataSetChanged();
+                switchListViewToShoppingLists();
+                break;
+            default:
+                switchListViewToArticles();
                 break;
 
         }
@@ -118,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onClick(View view) {
 
                 switch (listViewSwitch) {
-                    case "articles":
+                    default:
                         if (articleName.getText().length() > 0) {
                             articleAmount.requestFocus();
                             String amount = articleAmount.getText().toString();
@@ -128,8 +111,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             articleList.add(new Article(articleName.getText().toString(), amount , false));
 
                             articleAdapter.notifyDataSetChanged();
-                            Snackbar.make(view, "Replace with your own action!! " + amount, Snackbar.LENGTH_LONG)
-                                    .setAction("Action", null).show();
+//                            Snackbar.make(view, "Replace with your own action!! " + amount, Snackbar.LENGTH_LONG)
+//                                    .setAction("Action", null).show();
                         }
                         articleName.setText("");
                         articleAmount.setText("");
@@ -241,7 +224,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_speichern) {
+        if (id == R.id.action_sort) {
             return true;
         }
 
@@ -309,5 +292,36 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
         client.disconnect();
+    }
+
+    public void switchListViewToArticles () {
+//        if (!articleList.isEmpty()){
+//            articleList.clear();
+//            articleAdapter.notifyDataSetChanged();
+//        }
+        articleName.setVisibility(View.VISIBLE);
+        articleAmount.setVisibility(View.VISIBLE);
+        articleList = new ArrayList<Article>();
+        articleAdapter = new ArticleAdapter(articleList, this);
+        listView.setAdapter(articleAdapter);
+    }
+
+    public void switchListViewToShoppingLists () {
+        articleName.setVisibility(View.GONE);
+        articleAmount.setVisibility(View.GONE);
+        shoppingListList = new ArrayList<ShoppingList>();
+        shoppingListAdapter = new ShoppingListAdapter(shoppingListList, this);
+        listView.setAdapter(shoppingListAdapter);
+
+        ShoppingList unsavedShoppingList1 = new ShoppingList();
+        ShoppingList unsavedShoppingList2 = new ShoppingList("Party");
+        ShoppingList unsavedShoppingList3 = new ShoppingList("Kuchenrezept");
+        ShoppingList unsavedShoppingList4 = new ShoppingList();
+
+        shoppingListList.add(unsavedShoppingList1);
+        shoppingListList.add(unsavedShoppingList2);
+        shoppingListList.add(unsavedShoppingList3);
+        shoppingListList.add(unsavedShoppingList4);
+        shoppingListAdapter.notifyDataSetChanged();
     }
 }
