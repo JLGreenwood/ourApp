@@ -156,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         shoppingList = new ShoppingList("BananaList001", (ArrayList<Article>) articleList);
 
         couchbaseHelper.addShoppingList(shoppingList);
-//        couchbaseHelper.getAllDocuments();
+        couchbaseHelper.getAllDocuments();
     }
 
     @Override

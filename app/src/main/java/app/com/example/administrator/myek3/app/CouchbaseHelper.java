@@ -105,6 +105,7 @@ public class CouchbaseHelper {
      * when working operations on the whole collection.
      */
     public void getAllDocuments() {
+        Log.d(TAG, "Calling getAllDocuments.");
         // Let's find all documents and print them to the console.
         Query query = database.createAllDocumentsQuery();
         query.setAllDocsMode(Query.AllDocsMode.ALL_DOCS);
@@ -123,24 +124,17 @@ public class CouchbaseHelper {
                 // We can directly access properties from the document object.
                 Log.d(TAG, "Print object by property: " + doc.getProperty("BananaList001"));
 
-                Map<String, Object> testObject = (Map<String, Object>) doc.getProperty("BananaList001");
-                Iterator iterator = testObject.entrySet().iterator();
-                while (iterator.hasNext()) {
-                    Map.Entry pair = (Map.Entry)iterator.next();
-                    Log.d(TAG, "Print key = value: " + pair.getKey() + " = " + pair.getValue());
-                    iterator.remove(); // avoids a ConcurrentModificationException
-                    if (pair.getKey() == "listenArtikel") {
-                        Log.d(TAG, "Found articleList: " + pair.getValue());
-                        Log.d(TAG, "Found articleList: " + pair.getValue().getClass());
+                Map<ShoppingList, ArrayList<Article>> testObject = (Map<ShoppingList, ArrayList<Article>>) doc.getProperty("BananaList001");
+                Log.d(TAG, "TESTOBJECT: " + testObject.getClass());
+                /**
+                 * Returns a List?? of articles.
+                 */
+                Log.d(TAG, "TESTOBJECT get shoppingListArticles: " + testObject.get("shoppingListArticles"));
+                Log.d(TAG, "TESTOBJECT get shoppingListArticles: " + testObject.get("shoppingListArticles").getClass());
 
-//                        List<Object> articleList = (ArrayList) pair.getValue();
-                        for (Object temp : (ArrayList)pair.getValue()) {
-                            Log.d(TAG, "Article: " + temp);
-                            Log.d(TAG, "Article toString(): " + temp.toString());
-                            Log.d(TAG, "Article getClass(): " + temp.getClass());
-                        }
-                    }
-                }
+                ArrayList<Article> testArticleList = testObject.get("shoppingListArticles");
+                ShoppingList recreatedShoppingList = new ShoppingList("TESTSHOPPINGLIST", testObject.get("shoppingListArticles"));
+                addShoppingList(recreatedShoppingList);
             }
         }
     }
