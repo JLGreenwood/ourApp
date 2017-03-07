@@ -22,7 +22,7 @@ public class Article {
 // Konstruktoren
     public Article() {
         this.articleName = null;
-        this.articleAmount = null;
+        this.articleAmount = "1";
         this.articleUnit = null;
         this.articlePrice = 0.0;
         this.articleComment = null;

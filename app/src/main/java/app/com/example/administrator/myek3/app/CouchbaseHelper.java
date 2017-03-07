@@ -145,23 +145,24 @@ public class CouchbaseHelper {
          */
         Log.d(TAG, "Shopping list Articles class => " + myShoppingList.get("shoppingListArticles").getClass());
 
-//        Object art1 = myShoppingList.get("shoppingListArticles").get(0);
-//        Log.d(TAG, "art1: " + art1.toString());
-//        Log.d(TAG, "art1: " + art1.getClass());
-
-//        Map<String, Object> articleMap1 = (Map<String, Object>) art1;
-//        Log.d(TAG, "articleMap1: " + articleMap1.toString());
-//        Log.d(TAG, "articleMap1: " + articleMap1.getClass());
-
-
+        /**
+         * TODO: Use for sorting before calling Article constructors!!!!
+         */
 //        for(int i = 0; i < myShoppingList.get("shoppingListArticles").size(); i++) {
 //
 //            Object art11 = myShoppingList.get("shoppingListArticles").get(i);
 //            Map<String, Object> articleMap1 = (Map<String, Object>) art11;
-//            String s = articleMap1.;
-//            Object test11 = ((Map<String, Object>) art11).get("articleName");
-//
-//            Log.d(TAG, "art11:::::::::: " + art11.getClass());
+////            String amount = (String) articleMap1.get("articleAmount");
+////            String name = (String) articleMap1.get("articleName");
+////            String comment = (String) articleMap1.get("articleComment");
+////            Double price = (Double) articleMap1.get("articlePrice");
+//            Article artikel = new Article(
+//                    (String) articleMap1.get("articleName"),
+//                    (String) articleMap1.get("articleAmount"),
+//                    null,
+//                    (Double) articleMap1.get("articlePrice"),
+//                    (String) articleMap1.get("articleComment"));
+//            Log.d(TAG, "art11 :::::::::: " + artikel.toString());
 //        }
 
 
@@ -173,10 +174,9 @@ public class CouchbaseHelper {
             Log.d(TAG, "art 2 string:: " + art.toString());
             Log.d(TAG, "art getClass:: " + art.getClass());
 
+            Article article = new Article();
             Map<String, Object> articleMap = (Map<String, Object>) art;
             for(Map.Entry<String, Object> entry : articleMap.entrySet()) {
-
-                Article article = new Article();
 
                 if(entry.getKey().equals("articleName") ) {
                     Log.d(TAG, "articleName: " + entry.getValue());
@@ -203,10 +203,10 @@ public class CouchbaseHelper {
                     article.setArticleChecked((Boolean) entry.getValue());
                 }
                 Log.d(TAG, "EXCEPTION LOG: " + article.getArticleName());
-                if(article.getArticleName() != null) {
-                    articleList.add(article);
+                if(article.getArticleName() != null && article.getArticleAmount() != null) {
                 }
             }
+            articleList.add(article);
         }
         shoppingList = new ShoppingList(listName, (ArrayList<Article>) articleList);
         return shoppingList;
