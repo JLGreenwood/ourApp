@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     //    String listViewSwitch = "articles";
     //    String listViewSwitch = "shoppingLists";
-    String listViewSwitch = "shoppingLists";
+    String listViewSwitch = "articles";
 
     List<Article> articleList;
     List<ShoppingList> shoppingListList;
