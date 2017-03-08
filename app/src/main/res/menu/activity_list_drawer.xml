@@ -3,17 +3,17 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_ekl"
+            android:id="@+id/nav_ekl_list"
             android:icon="@drawable/ic_ekl"
             android:title="@string/modul1"
             android:textSize="14sp" />
         <item
-            android:id="@+id/nav_liste"
+            android:id="@+id/nav_liste_list"
             android:icon="@drawable/ic_list"
             android:title="@string/modul2"
             android:textSize="14sp" />
         <item
-            android:id="@+id/nav_statistik"
+            android:id="@+id/nav_stat_list"
             android:icon="@drawable/ic_stat"
             android:title="@string/modul3"
             android:textSize="14sp"/>
@@ -24,12 +24,12 @@
         android:textSize="14sp">
         <menu>
             <item
-                android:id="@+id/nav_tut"
+                android:id="@+id/nav_tut_list"
                 android:icon="@drawable/ic_help"
                 android:title="@string/hilfe"
                 android:textSize="14sp"/>
             <item
-                android:id="@+id/nav_imp"
+                android:id="@+id/nav_imp_list"
                 android:icon="@drawable/ic_group"
                 android:title="@string/wir"
                 android:textSize="14sp"/>
