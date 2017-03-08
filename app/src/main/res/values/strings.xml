@@ -12,7 +12,7 @@
     <string name="divider">Info</string>
     <string name="subheader">Ein Projekt von IT 0815+1</string>
 
-    <string name="action_sort">nach ... Sortieren</string>
+    <string name="action_sort">alphabetisch Sortieren</string>
     <string name="action_rename">Liste umbenennen</string>
 
     <string name="input_artikel">Artikel</string>
@@ -42,7 +42,8 @@
 
     <string name="slide_4_title">Viel Spaß!</string>
     <string name="slide_4_desc">Mach was draus!</string>
+
     <string name="action_scan_ean">SCAN EAN</string>
-
-
+    <string name="context_delete">Artikel löschen</string>
+    <string name="context_edit">Bearbeiten</string>
 </resources>

@@ -1,5 +1,6 @@
 package app.com.example.administrator.myek3.app;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -10,9 +11,11 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.ContextMenu;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,15 +23,22 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.CheckBox;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
+        AdapterView.OnItemLongClickListener{
 
     EditText articleName;
     EditText articleAmount;
@@ -62,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         articleList = new ArrayList<Article>();
         articleAdapter = new ArticleAdapter(articleList, this);
         listView.setAdapter(articleAdapter);
+        listView.setOnItemLongClickListener(this);
 
         registerForContextMenu(listView);
 
@@ -136,41 +147,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //        couchbaseHelper.getAllDocuments();
     }
 
-
-    // LONGP PRESURE GESTURE  // LONGP PRESURE GESTURE  // LONGP PRESURE GESTURE
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_context_menu, menu);{
-        }
-
-    }
-
-
-
-//LONG PRESURE function
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        switch (item.getItemId())
-        {
-            case R.id.delete_id:  //DELETE
-                articleList.remove(info.position);
-                articleAdapter.notifyDataSetChanged();
-                return true;
-            case R.id.delete_all_id: //DELETE ALL
-                articleList.removeAll(articleList);
-                articleAdapter.notifyDataSetChanged();
-                return true;
-            default:
-                return super.onContextItemSelected(item);
-        }
-
-
-    }
- // END LONGP PRESURE GESTURE  // END LONGP PRESURE GESTURE // END LONGP PRESURE GESTURE
+    // Logic for deleting complete list of articles. (activity context menu)
+    // articleList.removeAll(articleList);
+    // articleAdapter.notifyDataSetChanged();
 
 
     @Override
@@ -199,6 +178,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_sort) {
+            Collections.sort(articleList,new Comparator<Article>(){
+
+                @Override
+                public int compare(Article o1, Article o2) {
+
+                    if (o1.getArticleName().compareTo(o2.getArticleName()) < 0) {
+                        return -1;
+                    } else {
+                        return 1;
+                    }
+
+                }
+            });
+
+            articleAdapter.notifyDataSetChanged();
+
             return true;
         }
 
@@ -269,4 +264,90 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         client.disconnect();
     }
 
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        int position = (int) info.id;
+
+        switch (item.getItemId()) {
+
+            case R.id.context_delete:
+                this.articleList.remove(position);
+                this.articleAdapter.notifyDataSetChanged();
+                break;
+            case R.id.context_edit:
+
+                createEditDialog(articleList.get(position));
+                break;
+        }
+        return super.onContextItemSelected(item);
+    }
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        view.getContext();
+        registerForContextMenu(listView);
+
+        Toast.makeText(MainActivity.this, articleList.get(position).getArticleName(),Toast.LENGTH_SHORT).show();
+        //createEditDialog(articleList.get(position));
+        return false;
+    }
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.context_menu, menu);
+    }
+    public void createEditDialog(final Article arti) {
+
+        LayoutInflater li = LayoutInflater.from(MainActivity.this);
+        View dialogView = li.inflate(R.layout.edit_dialog_layout, null);
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+
+        alertDialogBuilder.setView(dialogView);
+
+        final EditText inputText1 = (EditText) dialogView.findViewById(R.id.edit_name_input);
+        final EditText inputText2 = (EditText) dialogView.findViewById(R.id.edit_amount_input);
+        final EditText inputText3 = (EditText) dialogView.findViewById(R.id.edit_price_input);
+        final EditText inputText4 = (EditText) dialogView.findViewById(R.id.edit_unit_input);
+        final EditText inputText5 = (EditText) dialogView.findViewById(R.id.edit_comment_input);
+        final CheckBox isSelected = (CheckBox) dialogView.findViewById(R.id.cancel_action);
+        inputText1.setText(arti.getArticleName());
+        inputText2.setText(arti.getArticleAmount());
+        inputText3.setText(CheckData.checkNumberIsEmpty(""+arti.getArticlePrice()));
+        inputText4.setText(arti.getArticleUnit());
+        inputText5.setText(arti.getArticleComment());
+        isSelected.setChecked(arti.isArticleChecked());
+
+
+        final TextView dialogMessage = (TextView) dialogView.findViewById(R.id.edit_dialog_message);
+
+        alertDialogBuilder
+                .setCancelable(true)
+                .setPositiveButton("Save",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                arti.setArticleName(inputText1.getText().toString());
+                                arti.setArticleAmount(inputText2.getText().toString());
+                                if(inputText3.getText().toString().equals("")){
+                                    arti.setArticlePrice(0);
+                                }else{
+                                    arti.setArticlePrice(CheckData.formatData(Double.parseDouble(inputText3.getText().toString())));
+                                }
+
+                                arti.setArticleUnit(inputText4.getText().toString());
+                                arti.setArticleComment(inputText4.getText().toString());
+                                arti.setArticleChecked(isSelected.isChecked());
+                                articleAdapter.notifyDataSetChanged();
+                            }
+                        })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+        final AlertDialog alert = alertDialogBuilder.create();
+        alert.show();
+    }
 }

@@ -22,20 +22,36 @@ public class Article {
 // Konstruktoren
     public Article(String articleName){
         this.articleName = articleName;
+        this.articleAmount = "1";
+        this.articleUnit = "";
+        this.articlePrice = 0;
+        this.articleComment = "";
+        this.articleChecked = false;
+
     }
     public Article(String articleName, String articleAmount){
         this.articleName = articleName;
         this.articleAmount = articleAmount;
+        this.articleUnit = "";
+        this.articlePrice = 0;
+        this.articleComment = "";
+        this.articleChecked = false;
     }
     public Article(String articleName, String articleAmount, boolean articleChecked){
         this.articleName = articleName;
         this.articleAmount = articleAmount;
+        this.articleUnit = "";
+        this.articlePrice = 0;
+        this.articleComment = "";
         this.articleChecked = articleChecked;
     }
     public Article(String articleName, String articleAmount, String articleUnit){
         this.articleName = articleName;
         this.articleAmount = articleAmount;
         this.articleUnit = articleUnit;
+        this.articlePrice = 0;
+        this.articleComment = "";
+        this.articleChecked = false;
     }
     public Article(String articleName, String articleAmount, String articleUnit, double articlePrice, String articleComment){
         this.articleName = articleName;
@@ -43,6 +59,7 @@ public class Article {
         this.articleUnit = articleUnit;
         this.articlePrice = articlePrice;
         this.articleComment = articleComment;
+        this.articleChecked = false;
     }
 
     // Setter()
@@ -55,6 +72,7 @@ public class Article {
     public void setArticleUnit(String articleUnit){
         this.articleUnit = articleUnit;
     }
+    public void setArticlePrice(double articlePrice){this.articlePrice = articlePrice;}
     public void setArticleComment(String articleComment) {
         this.articleComment = articleComment;
     }
@@ -72,6 +90,7 @@ public class Article {
     public String getArticleUnit() {
         return articleUnit;
     }
+    public double getArticlePrice() {return articlePrice;}
     public String getArticleComment() {
         return articleComment;
     }
