@@ -21,8 +21,9 @@
             android:label="MyEk3"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
-                <action android:name="app.com.example.administrator.myek3.app" />
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity

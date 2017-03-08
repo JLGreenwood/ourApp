@@ -268,7 +268,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.nav_liste) {
 
         } else if (id == R.id.nav_statistik) {
-            Intent intent = new Intent (this, GraphView.class );
+            Intent intent = new Intent (this, GraphV.class );
             startActivity(intent);
         } else if (id == R.id.nav_tut) {
             Session mysession = new Session(this);
