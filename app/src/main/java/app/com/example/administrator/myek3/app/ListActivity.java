@@ -136,15 +136,12 @@ public class ListActivity extends AppCompatActivity
         shoppingListAdapter = new ShoppingListAdapter(shoppingListList, this);
         listView.setAdapter(shoppingListAdapter);
 
-        ShoppingList unsavedShoppingList1 = new ShoppingList();
-        ShoppingList unsavedShoppingList2 = new ShoppingList("Party");
-        ShoppingList unsavedShoppingList3 = new ShoppingList("Kuchenrezept");
-        ShoppingList unsavedShoppingList4 = new ShoppingList();
+        CouchbaseHelper cbh = new CouchbaseHelper(this);
+        ArrayList<String> docIds = cbh.getAllDocumentIds();
 
-        shoppingListList.add(unsavedShoppingList1);
-        shoppingListList.add(unsavedShoppingList2);
-        shoppingListList.add(unsavedShoppingList3);
-        shoppingListList.add(unsavedShoppingList4);
+        for(String docId : docIds) {
+            shoppingListList.add(cbh.getShoppingListById(docId));
+        }
         shoppingListAdapter.notifyDataSetChanged();
     }
 
