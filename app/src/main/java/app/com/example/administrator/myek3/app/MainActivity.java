@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             articleList.add(new Article(articleName.getText().toString(), amount , false));
 
                             articleAdapter.notifyDataSetChanged();
-                            Snackbar.make(view, "Replace with your own action!! " + amount, Snackbar.LENGTH_LONG)
+                            Snackbar.make(view, amount +" " + " "+articleName.getText()+ " Hinzugefügt! " , Snackbar.LENGTH_LONG)
                                     .setAction("Action", null).show();
                         }
                         articleName.setText("");
@@ -194,17 +194,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_context_menu, menu);
+        inflater.inflate(R.menu.main_context_menu, menu);{
+        }
+
     }
 
 
+
+//LONG PRESURE function
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         switch (item.getItemId())
         {
-            case R.id.delete_id:
+            case R.id.delete_id:  //DELETE
                 articleList.remove(info.position);
+                articleAdapter.notifyDataSetChanged();
+                return true;
+            case R.id.delete_all_id: //DELETE ALL
+                articleList.removeAll(articleList);
                 articleAdapter.notifyDataSetChanged();
                 return true;
             default:
