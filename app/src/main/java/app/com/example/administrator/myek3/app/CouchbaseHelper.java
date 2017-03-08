@@ -111,11 +111,15 @@ public class CouchbaseHelper {
     }
 
     /**
-     * Returns a given shopping list by its given id.
+     * Expects two parameters firstly a shoppingList object and secondly a String containing
+     * the shoppingLists id. Ensure to first insert the shoppingList into the database, otherwise
+     * the shoppingList won't have an id assigned to it. The id only gets set by the database when
+     * the ShoppingList gets inserted the first time.
+     * @param sl
      * @param id
      * @return
      */
-    public ShoppingList getShoppingListById(String id) {
+    public ShoppingList getShoppingListById(ShoppingList sl, String id) {
 
         String listName = null;
         List<Article> articleList = new ArrayList<Article>();
@@ -135,7 +139,7 @@ public class CouchbaseHelper {
             }
         }
 
-        Map<ShoppingList, ArrayList<Article>> myShoppingList = (Map<ShoppingList, ArrayList<Article>>) doc.getProperty("BananaList001");
+        Map<ShoppingList, ArrayList<Article>> myShoppingList = (Map<ShoppingList, ArrayList<Article>>) doc.getProperty(sl.getShoppingListName());
         Log.d(TAG, "ShoppingList: " + myShoppingList);
 
         /**
@@ -173,27 +177,27 @@ public class CouchbaseHelper {
             Map<String, Object> articleMap = (Map<String, Object>) art;
             for(Map.Entry<String, Object> entry : articleMap.entrySet()) {
 
-                if(entry.getKey().equals("articleName") ) {
+                if(entry.getKey() == "articleName" && entry.getValue() != null) {
                     Log.d(TAG, "articleName: " + entry.getValue());
                     article.setArticleName(entry.getValue().toString());
                 }
-                if(entry.getKey() == "articleAmount") {
+                if(entry.getKey() == "articleAmount" && entry.getValue() != null) {
                     Log.d(TAG, "articleAmount: " + entry.getValue());
                     article.setArticleAmount((String) entry.getValue());
                 }
-                if(entry.getKey() == "articleUnit") {
+                if(entry.getKey() == "articleUnit" && entry.getValue() != null) {
                     Log.d(TAG, "articleUnit: " + entry.getValue());
                     article.setArticleUnit((String) entry.getValue());
                 }
-                if(entry.getKey() == "articlePrice") {
+                if(entry.getKey() == "articlePrice" && entry.getValue() != null) {
                     Log.d(TAG, "articlePrice: " + entry.getValue());
                     article.setArticlePrice((Double) entry.getValue());
                 }
-                if(entry.getKey() == "articleComment") {
+                if(entry.getKey() == "articleComment" && entry.getValue() != null) {
                     Log.d(TAG, "articleComment: " + entry.getValue());
                     article.setArticleComment((String) entry.getValue());
                 }
-                if(entry.getKey() == "articleChecked") {
+                if(entry.getKey() == "articleChecked" && entry.getValue() != null) {
                     Log.d(TAG, "articleChecked: " + entry.getValue());
                     article.setArticleChecked((Boolean) entry.getValue());
                 }

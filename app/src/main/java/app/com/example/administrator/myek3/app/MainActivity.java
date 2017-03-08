@@ -73,20 +73,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         /**
          * Create articles, add them to a list and then insert them into the database.
          */
-        Article article1 = new Article("Worst", "10");
-        Article article2 = new Article("Brot", "5");
-        Article article3 = new Article("Rose", "1", true);
+        Article article1 = new Article("BANANAAAAAs", "13");
+        Article article2 = new Article("Wuerstchen", "14");
+        Article article3 = new Article("HotDogBroetchen", "14", true);
         articleList = new ArrayList<Article>();
         articleList.add(article1);
         articleList.add(article2);
         articleList.add(article3);
-        shoppingList = new ShoppingList("BananaList001", (ArrayList<Article>) articleList);
-//        couchbaseHelper.addShoppingList(shoppingList);
+        shoppingList = new ShoppingList("MoreShoppin", (ArrayList<Article>) articleList);
+
+        /**
+         * Inserts a new shoppingList and sets the document id as attribute to the current
+         * shoppingList object.
+         */
+        shoppingList.setShoppingListId(couchbaseHelper.addShoppingList(shoppingList));
+        Log.d(TAG, "Add ShoppingList object and retrieve its id from the callback. " + shoppingList.getShoppingListId());
 
         /**
          * Retrieve shopping list by its given id.
          */
-        bastisShoppingList = (ShoppingList) couchbaseHelper.getShoppingListById("569f3a43-a9a3-4445-ae78-d509f0087dc1");
+        bastisShoppingList = couchbaseHelper.getShoppingListById(shoppingList, shoppingList.getShoppingListId());
 
         switch (listViewSwitch) {
             case "articles":
