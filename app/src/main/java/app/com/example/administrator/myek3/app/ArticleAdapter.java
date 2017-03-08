@@ -69,8 +69,9 @@ public class ArticleAdapter extends BaseAdapter{
             holder.articleView.setPaintFlags(0);
 
         }
-
+      
         holder.articleView.setText(article.getArticleAmount() + " x " + article.getArticleName()  );
+
         return convertView;
 
     }
