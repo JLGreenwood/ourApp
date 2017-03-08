@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         /**
          * Retrieve shopping list by its given id.
          */
-        bastisShoppingList = couchbaseHelper.getShoppingListById(shoppingList, shoppingList.getShoppingListId());
+        bastisShoppingList = couchbaseHelper.getShoppingListById(shoppingList.getShoppingListId());
 
         switch (listViewSwitch) {
             case "articles":

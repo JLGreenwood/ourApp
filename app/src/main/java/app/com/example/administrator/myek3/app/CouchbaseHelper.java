@@ -115,11 +115,13 @@ public class CouchbaseHelper {
      * the shoppingLists id. Ensure to first insert the shoppingList into the database, otherwise
      * the shoppingList won't have an id assigned to it. The id only gets set by the database when
      * the ShoppingList gets inserted the first time.
+     *
+     * TODO: Revise PLS!
      * @param sl
      * @param id
      * @return
      */
-    public ShoppingList getShoppingListById(ShoppingList sl, String id) {
+    public ShoppingList getShoppingListById(String id) {
 
         String listName = null;
         List<Article> articleList = new ArrayList<Article>();
