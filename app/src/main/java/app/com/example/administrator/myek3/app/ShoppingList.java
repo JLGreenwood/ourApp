@@ -20,6 +20,7 @@ public class ShoppingList implements Serializable {
     private ArrayList<Article> shoppingListArticles;
     private double shoppingListTotalPrice;
     private boolean shoppingListCompleted;
+    private String shoppingListId;
 //    private static int listenNumber = 0;
 
     // Konstruktor
@@ -60,6 +61,9 @@ public class ShoppingList implements Serializable {
     public void setShoppingListCompleted(boolean shoppingListCompleted) {
         this.shoppingListCompleted = shoppingListCompleted;
     }
+    public void setShoppingListId(String shoppingListId) {
+        this.shoppingListId = shoppingListId;
+    }
 
     // Getter
     public String getShoppingListName() {
@@ -79,5 +83,8 @@ public class ShoppingList implements Serializable {
     }
     public boolean isShoppingListCompleted() {
         return shoppingListCompleted;
+    }
+    public String getShoppingListId() {
+        return shoppingListId;
     }
 }
