@@ -17,6 +17,15 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".GraphV"
+            android:label="MyEk3"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="app.com.example.administrator.myek3.app" />
+
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
