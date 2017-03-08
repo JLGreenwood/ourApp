@@ -1,8 +1,8 @@
 package app.com.example.administrator.myek3.app;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -11,9 +11,11 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.ContextMenu;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,6 +23,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.CheckBox;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
@@ -28,27 +34,20 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.jjoe64.graphview.GraphView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
+        AdapterView.OnItemLongClickListener{
 
     EditText articleName;
     EditText articleAmount;
-
     FloatingActionButton fab;
     ListView listView;
 
-    ShoppingList shoppingList;
-
-    //    String listViewSwitch = "articles";
-    //    String listViewSwitch = "shoppingLists";
-    String listViewSwitch = "articles";
-
     List<Article> articleList;
-    List<ShoppingList> shoppingListList;
     ArticleAdapter articleAdapter;
-    ShoppingListAdapter shoppingListAdapter;
-
 
     private static final String TAG = MainActivity.class.getSimpleName();
     /**
@@ -71,36 +70,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         articleAmount = (EditText) findViewById(R.id.input_anzahl);
         articleAmount.setTypeface(typeface);
 
-        switch (listViewSwitch) {
-            case "articles":
-                articleName.setVisibility(View.VISIBLE);
-                articleAmount.setVisibility(View.VISIBLE);
-                articleList = new ArrayList<Article>();
-                articleAdapter = new ArticleAdapter(articleList, this);
-                listView.setAdapter(articleAdapter);
-                break;
-            case "shoppingLists":
-                articleName.setVisibility(View.INVISIBLE);
-                articleAmount.setVisibility(View.INVISIBLE);
-                shoppingListList = new ArrayList<ShoppingList>();
-                shoppingListAdapter = new ShoppingListAdapter(shoppingListList, this);
-                listView.setAdapter(shoppingListAdapter);
+        articleList = new ArrayList<Article>();
+        articleAdapter = new ArticleAdapter(articleList, this);
+        listView.setAdapter(articleAdapter);
+        listView.setOnItemLongClickListener(this);
 
-                ShoppingList unsavedShoppingList1 = new ShoppingList();
-                ShoppingList unsavedShoppingList2 = new ShoppingList("Party");
-                ShoppingList unsavedShoppingList3 = new ShoppingList("Kuchenrezept");
-                ShoppingList unsavedShoppingList4 = new ShoppingList();
-
-                shoppingListList.add(unsavedShoppingList1);
-                shoppingListList.add(unsavedShoppingList2);
-                shoppingListList.add(unsavedShoppingList3);
-                shoppingListList.add(unsavedShoppingList4);
-
-                shoppingListAdapter.notifyDataSetChanged();
-                break;
-
-        }
-             registerForContextMenu(listView);
+        registerForContextMenu(listView);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -117,50 +92,35 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                switch (listViewSwitch) {
-                    case "articles":
-                        if (articleName.getText().length() > 0) {
-                            articleAmount.requestFocus();
-                            String amount = articleAmount.getText().toString();
-                            if (amount.equals("") || amount.equals("0")) {
-                                amount = "1";
-                            }
-                            articleList.add(new Article(articleName.getText().toString(), amount , false));
-
-                            articleAdapter.notifyDataSetChanged();
-                            Snackbar.make(view, amount +" " + " "+articleName.getText()+ " Hinzugefügt! " , Snackbar.LENGTH_LONG)
-                                    .setAction("Action", null).show();
-                        }
-                        articleName.setText("");
-                        articleAmount.setText("");
-                        articleAmount.requestFocus();
-                        break;
-                    case "shoppingLists":
-
-                        break;
-
+                if (articleName.getText().length() > 0) {
+                    articleAmount.requestFocus();
+                    String amount = articleAmount.getText().toString();
+                    if (amount.equals("") || amount.equals("0")) {
+                        amount = "1";
+                    }
+                    articleList.add(new Article(articleName.getText().toString(), amount , false));
+                    articleAdapter.notifyDataSetChanged();
+                    Snackbar.make(view, amount +" " + " "+articleName.getText()+ " Hinzugefügt! " , Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
                 }
+                articleName.setText("");
+                articleAmount.setText("");
+                articleAmount.requestFocus();
             }
         });
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                 Article art = articleList.get(position);
-
                 if (art.isArticleChecked()) {
-
                     art.setArticleChecked(false);
                     articleAdapter.notifyDataSetChanged();
-
                 }
                 else {
                     art.setArticleChecked(true);
                     articleAdapter.notifyDataSetChanged();
                 }
-
             }
         });
 
@@ -168,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
          * Initialize an instance of our databaseHelper class and call our methods.
          */
         CouchbaseHelper couchbaseHelper = new CouchbaseHelper(this);
-//        couchbaseHelper.createArticle();
+//       couchbaseHelper.createArticle();
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -188,41 +148,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //        couchbaseHelper.getAllDocuments();
     }
 
-
-    // LONGP PRESURE GESTURE  // LONGP PRESURE GESTURE  // LONGP PRESURE GESTURE
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_context_menu, menu);{
-        }
-
-    }
-
-
-
-//LONG PRESURE function
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        switch (item.getItemId())
-        {
-            case R.id.delete_id:  //DELETE
-                articleList.remove(info.position);
-                articleAdapter.notifyDataSetChanged();
-                return true;
-            case R.id.delete_all_id: //DELETE ALL
-                articleList.removeAll(articleList);
-                articleAdapter.notifyDataSetChanged();
-                return true;
-            default:
-                return super.onContextItemSelected(item);
-        }
-
-
-    }
- // END LONGP PRESURE GESTURE  // END LONGP PRESURE GESTURE // END LONGP PRESURE GESTURE
+    // Logic for deleting complete list of articles. (activity context menu)
+    // articleList.removeAll(articleList);
+    // articleAdapter.notifyDataSetChanged();
 
 
     @Override
@@ -250,7 +178,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_speichern) {
+        if (id == R.id.action_sort) {
+            Collections.sort(articleList,new Comparator<Article>(){
+
+                @Override
+                public int compare(Article o1, Article o2) {
+
+                    if (o1.getArticleName().compareTo(o2.getArticleName()) < 0) {
+                        return -1;
+                    } else {
+                        return 1;
+                    }
+
+                }
+            });
+
+            articleAdapter.notifyDataSetChanged();
+
             return true;
         }
 
@@ -266,7 +210,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (id == R.id.nav_ekl) {
 
         } else if (id == R.id.nav_liste) {
-
+            Intent i = new Intent(this, ListActivity.class);
+            startActivity(i);
         } else if (id == R.id.nav_statistik) {
             Intent intent = new Intent (this, GraphV.class );
             startActivity(intent);
@@ -320,19 +265,90 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         client.disconnect();
     }
 
-    @Override
-    public void onPause(){
-        super.onPause();
-        Snackbar.make(findViewById(R.id.content_main), "Replace with your own action!! " , Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show();
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        int position = (int) info.id;
 
+        switch (item.getItemId()) {
+
+            case R.id.context_delete:
+                this.articleList.remove(position);
+                this.articleAdapter.notifyDataSetChanged();
+                break;
+            case R.id.context_edit:
+
+                createEditDialog(articleList.get(position));
+                break;
+        }
+        return super.onContextItemSelected(item);
     }
     @Override
-    public void onResume(){
-        super.onResume();
-        Snackbar.make(findViewById(R.id.content_main), "onResume " , Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show();
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        view.getContext();
+        registerForContextMenu(listView);
 
+        Toast.makeText(MainActivity.this, articleList.get(position).getArticleName(),Toast.LENGTH_SHORT).show();
+        //createEditDialog(articleList.get(position));
+        return false;
     }
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
 
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.context_menu, menu);
+    }
+    public void createEditDialog(final Article arti) {
+
+        LayoutInflater li = LayoutInflater.from(MainActivity.this);
+        View dialogView = li.inflate(R.layout.edit_dialog_layout, null);
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+
+        alertDialogBuilder.setView(dialogView);
+
+        final EditText inputText1 = (EditText) dialogView.findViewById(R.id.edit_name_input);
+        final EditText inputText2 = (EditText) dialogView.findViewById(R.id.edit_amount_input);
+        final EditText inputText3 = (EditText) dialogView.findViewById(R.id.edit_price_input);
+        final EditText inputText4 = (EditText) dialogView.findViewById(R.id.edit_unit_input);
+        final EditText inputText5 = (EditText) dialogView.findViewById(R.id.edit_comment_input);
+        final CheckBox isSelected = (CheckBox) dialogView.findViewById(R.id.cancel_action);
+        inputText1.setText(arti.getArticleName());
+        inputText2.setText(arti.getArticleAmount());
+        inputText3.setText(CheckData.checkNumberIsEmpty(""+arti.getArticlePrice()));
+        inputText4.setText(arti.getArticleUnit());
+        inputText5.setText(arti.getArticleComment());
+        isSelected.setChecked(arti.isArticleChecked());
+
+
+        final TextView dialogMessage = (TextView) dialogView.findViewById(R.id.edit_dialog_message);
+
+        alertDialogBuilder
+                .setCancelable(true)
+                .setPositiveButton("Save",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                arti.setArticleName(inputText1.getText().toString());
+                                arti.setArticleAmount(inputText2.getText().toString());
+                                if(inputText3.getText().toString().equals("")){
+                                    arti.setArticlePrice(0);
+                                }else{
+                                    arti.setArticlePrice(CheckData.formatData(Double.parseDouble(inputText3.getText().toString())));
+                                }
+
+                                arti.setArticleUnit(inputText4.getText().toString());
+                                arti.setArticleComment(inputText4.getText().toString());
+                                arti.setArticleChecked(isSelected.isChecked());
+                                articleAdapter.notifyDataSetChanged();
+                            }
+                        })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+        final AlertDialog alert = alertDialogBuilder.create();
+        alert.show();
+    }
 }

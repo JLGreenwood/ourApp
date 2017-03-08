@@ -1,9 +1,8 @@
 <resources>
-    <string name="app_name">MyEk3</string>
+    <string name="app_name">EiKa</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
 
     <string name="modul1">aktuelle Liste</string>
     <string name="modul2">Listenverwaltung</string>
@@ -12,11 +11,13 @@
     <string name="wir">Impressum</string>
     <string name="divider">Info</string>
     <string name="subheader">Ein Projekt von IT 0815+1</string>
-    <string name="action_speichern">Speichern</string>
-    <string name="action_laden">laden</string>
-    <string name="action_settings">Settings</string>
+
+    <string name="action_sort">alphabetisch Sortieren</string>
+    <string name="action_rename">Liste umbenennen</string>
+
     <string name="input_artikel">Artikel</string>
     <string name="input_anzahl">Anzahl</string>
+
 
     <string name="title_activity_welcome">Home Screen</string>
     <string name="next">Weiter</string>
@@ -41,7 +42,8 @@
 
     <string name="slide_4_title">Viel Spaß!</string>
     <string name="slide_4_desc">Mach was draus!</string>
+
     <string name="action_scan_ean">SCAN EAN</string>
-
-
+    <string name="context_delete">Artikel löschen</string>
+    <string name="context_edit">Bearbeiten</string>
 </resources>

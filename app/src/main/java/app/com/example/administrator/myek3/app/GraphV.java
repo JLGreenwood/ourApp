@@ -1,44 +1,46 @@
 package app.com.example.administrator.myek3.app;
 
-/**
- * Created by Khan on 07.03.2017.
- */
-
-import android.graphics.Color;
-import android.graphics.DashPathEffect;
-import android.graphics.Paint;
-import android.provider.ContactsContract;
+import android.content.Intent;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
-
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 
 import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GridLabelRenderer;
 import com.jjoe64.graphview.LegendRenderer;
-import com.jjoe64.graphview.Viewport;
 import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.DataPointInterface;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.PointsGraphSeries;
 
 import static app.com.example.administrator.myek3.app.R.color.colorPrimary;
 
 
-public class GraphV extends AppCompatActivity {
+public class GraphV extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private LineGraphSeries<DataPoint> series;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_grap_view);
+        setContentView(R.layout.activity_graph);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
 
         GraphView graph = (GraphView) findViewById(R.id.action_graph);
         PointsGraphSeries<DataPoint> series2 = new PointsGraphSeries<>(new DataPoint[]{
@@ -126,6 +128,35 @@ public class GraphV extends AppCompatActivity {
         };
         return (dp);
     }
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.nav_ekl) {
+            Intent i = new Intent(this, MainActivity.class);
+            startActivity(i);
+        } else if (id == R.id.nav_liste) {
+            Intent i = new Intent(this, ListActivity.class);
+            startActivity(i);
+        } else if (id == R.id.nav_statistik) {
+            Intent intent = new Intent (this, GraphV.class );
+            startActivity(intent);
+        } else if (id == R.id.nav_tut) {
+            Session mysession = new Session(this);
+            mysession.setFirstTimeLaunch(true);
+            Intent intent = new Intent(this, WelcomeActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_imp) {
+
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
 }
 
 
