@@ -2,7 +2,6 @@ package app.com.example.administrator.myek3.app;
 
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -33,19 +32,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     EditText articleName;
     EditText articleAmount;
-
     FloatingActionButton fab;
     ListView listView;
 
-    ShoppingList shoppingList;
-
-    //    String listViewSwitch = "articles";
-    //    String listViewSwitch = "shoppingLists";
-    String listViewSwitch = "";
-
     List<Article> articleList;
     ArticleAdapter articleAdapter;
-
 
     private static final String TAG = MainActivity.class.getSimpleName();
     /**
@@ -68,7 +59,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         articleAmount = (EditText) findViewById(R.id.input_anzahl);
         articleAmount.setTypeface(typeface);
 
-        switchListViewToArticles();
+        articleList = new ArrayList<Article>();
+        articleAdapter = new ArticleAdapter(articleList, this);
+        listView.setAdapter(articleAdapter);
+
         registerForContextMenu(listView);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -86,19 +80,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-            if (articleName.getText().length() > 0) {
-                articleAmount.requestFocus();
-                String amount = articleAmount.getText().toString();
-                if (amount.equals("") || amount.equals("0")) {
-                    amount = "1";
+                if (articleName.getText().length() > 0) {
+                    articleAmount.requestFocus();
+                    String amount = articleAmount.getText().toString();
+                    if (amount.equals("") || amount.equals("0")) {
+                        amount = "1";
+                    }
+                    articleList.add(new Article(articleName.getText().toString(), amount , false));
+                    articleAdapter.notifyDataSetChanged();
+                    Snackbar.make(view, amount +" " + " "+articleName.getText()+ " Hinzugefügt! " , Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
                 }
-                articleList.add(new Article(articleName.getText().toString(), amount , false));
-                articleAdapter.notifyDataSetChanged();
-            }
-            articleName.setText("");
-            articleAmount.setText("");
-            articleName.requestFocus();
+                articleName.setText("");
+                articleAmount.setText("");
+                articleAmount.requestFocus();
             }
         });
 
@@ -148,17 +143,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_context_menu, menu);
+        inflater.inflate(R.menu.main_context_menu, menu);{
+        }
+
     }
 
 
+
+//LONG PRESURE function
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         switch (item.getItemId())
         {
-            case R.id.delete_id:
+            case R.id.delete_id:  //DELETE
                 articleList.remove(info.position);
+                articleAdapter.notifyDataSetChanged();
+                return true;
+            case R.id.delete_all_id: //DELETE ALL
+                articleList.removeAll(articleList);
                 articleAdapter.notifyDataSetChanged();
                 return true;
             default:
@@ -266,15 +269,4 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         client.disconnect();
     }
 
-    public void switchListViewToArticles () {
-//        if (!articleList.isEmpty()){
-//            articleList.clear();
-//            articleAdapter.notifyDataSetChanged();
-//        }
-        articleName.setVisibility(View.VISIBLE);
-        articleAmount.setVisibility(View.VISIBLE);
-        articleList = new ArrayList<Article>();
-        articleAdapter = new ArticleAdapter(articleList, this);
-        listView.setAdapter(articleAdapter);
-    }
 }
