@@ -110,12 +110,13 @@ public class ListActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_ekl_list) {
-
+            Intent i = new Intent(this, MainActivity.class);
+            startActivity(i);
         } else if (id == R.id.nav_liste_list) {
 
         } else if (id == R.id.nav_stat_list) {
-            //      Intent intent = new Intent (this, GraphView.class );
-            //      startActivity(intent);
+                 Intent intent = new Intent (this, GraphV.class );
+                 startActivity(intent);
         } else if (id == R.id.nav_tut_list) {
             Session mysession = new Session(this);
             mysession.setFirstTimeLaunch(true);

@@ -32,6 +32,7 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.jjoe64.graphview.GraphView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -199,8 +200,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Intent i = new Intent(this, ListActivity.class);
             startActivity(i);
         } else if (id == R.id.nav_statistik) {
-      //      Intent intent = new Intent (this, GraphView.class );
-      //      startActivity(intent);
+            Intent intent = new Intent (this, GraphV.class );
+            startActivity(intent);
         } else if (id == R.id.nav_tut) {
             Session mysession = new Session(this);
             mysession.setFirstTimeLaunch(true);
