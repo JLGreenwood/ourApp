@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:id="@+id/edit_dialog_layout"
+    android:paddingLeft="10dp"
+    android:paddingTop="20dp"
+    android:paddingBottom="20dp"
+    android:paddingRight="10dp"
+    >
+
+    <TextView
+        android:id="@+id/edit_dialog_message"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:layout_marginBottom="5dp"
+        android:text="Listeneintrag bearbeiten"
+
+        />
+    <LinearLayout android:orientation="horizontal"
+        android:layout_width="match_parent">
+    <EditText
+        android:id="@+id/edit_name_input"
+        android:hint="Name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:maxLines="1"
+
+        >
+        <requestFocus />
+    </EditText>
+        <EditText
+            android:id="@+id/edit_amount_input"
+            android:hint="Anzahl"
+            android:inputType="number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:maxLines="1">
+        </EditText>
+    </LinearLayout>
+    <LinearLayout android:orientation="horizontal">
+    <EditText
+        android:id="@+id/edit_unit_input"
+        android:hint="Einheit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:maxLines="1">
+    </EditText>
+    <EditText
+        android:id="@+id/edit_price_input"
+        android:hint="Preis"
+        android:inputType="numberDecimal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:maxLines="1">
+    </EditText>
+    <CheckBox
+        android:id="@+id/cancel_action"
+        android:text="Markieren"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    </LinearLayout>
+    <EditText
+        android:id="@+id/edit_comment_input"
+        android:hint="Kommentar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="3">
+    </EditText>
+
+</TableLayout>

@@ -1,5 +1,6 @@
 package app.com.example.administrator.myek3.app;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,13 +10,21 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.ContextMenu;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -25,7 +34,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
+        AdapterView.OnItemLongClickListener{
 
     DatabaseHelper myDB;
     EditText articleName;
@@ -56,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         adapter = new ArtikelListAdapter(articleList, this);
         artikel_liste_view = (ListView) findViewById(R.id.eklist);
         artikel_liste_view.setAdapter(adapter);
-        registerForContextMenu(artikel_liste_view);
+        artikel_liste_view.setOnItemLongClickListener(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -64,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -79,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     if(amount.equals("") || amount.equals("0")){
                        amount = "1";
                     }
-                    articleList.add(new Article(articleName.getText().toString(), ""+amount , false));
+                    articleList.add(new Article(articleName.getText().toString(), amount , false));
 
                     adapter.notifyDataSetChanged();
                     Snackbar.make(view, "Replace with your own action!! " + amount, Snackbar.LENGTH_LONG)
@@ -198,5 +208,94 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
         client.disconnect();
+    }
+
+
+
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        int position = (int) info.id;
+
+        switch (item.getItemId()) {
+
+            case R.id.context_delete:
+                this.articleList.remove(position);
+                this.adapter.notifyDataSetChanged();
+                break;
+            case R.id.context_edit:
+
+                createEditDialog(articleList.get(position));
+                break;
+        }
+        return super.onContextItemSelected(item);
+    }
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        view.getContext();
+        registerForContextMenu(artikel_liste_view);
+
+        Toast.makeText(MainActivity.this, articleList.get(position).getArticleName(),Toast.LENGTH_SHORT).show();
+        //createEditDialog(articleList.get(position));
+        return false;
+    }
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.context_menu, menu);
+    }
+    public void createEditDialog(final Article arti) {
+
+        LayoutInflater li = LayoutInflater.from(MainActivity.this);
+        View dialogView = li.inflate(R.layout.edit_dialog_layout, null);
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+
+        alertDialogBuilder.setView(dialogView);
+
+        final EditText inputText1 = (EditText) dialogView.findViewById(R.id.edit_name_input);
+        final EditText inputText2 = (EditText) dialogView.findViewById(R.id.edit_amount_input);
+        final EditText inputText3 = (EditText) dialogView.findViewById(R.id.edit_price_input);
+        final EditText inputText4 = (EditText) dialogView.findViewById(R.id.edit_unit_input);
+        final EditText inputText5 = (EditText) dialogView.findViewById(R.id.edit_comment_input);
+        final CheckBox isSelected = (CheckBox) dialogView.findViewById(R.id.cancel_action);
+        inputText1.setText(arti.getArticleName());
+        inputText2.setText(arti.getArticleAmount());
+        inputText3.setText(CheckData.checkNumberIsEmpty(""+arti.getArticlePrice()));
+        inputText4.setText(arti.getArticleUnit());
+        inputText5.setText(arti.getArticleComment());
+        isSelected.setActivated(arti.isArticleChecked());
+
+
+        final TextView dialogMessage = (TextView) dialogView.findViewById(R.id.edit_dialog_message);
+
+        alertDialogBuilder
+                .setCancelable(true)
+                .setPositiveButton("Save",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                arti.setArticleName(inputText1.getText().toString());
+                                arti.setArticleAmount(inputText2.getText().toString());
+                                if(inputText3.getText().toString().equals("")){
+                                    arti.setArticlePrice(0);
+                                }else{
+                                    arti.setArticlePrice(CheckData.formatData(Double.parseDouble(inputText3.getText().toString())));
+                                }
+
+                                arti.setArticleUnit(inputText4.getText().toString());
+                                arti.setArticleComment(inputText4.getText().toString());
+                                arti.setArticleChecked(isSelected.isChecked());
+                                adapter.notifyDataSetChanged();
+                            }
+                        })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+        final AlertDialog alert = alertDialogBuilder.create();
+        alert.show();
     }
 }
