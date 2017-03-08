@@ -71,7 +71,11 @@ public class ArticleAdapter extends BaseAdapter{
         }
 
 
+<<<<<<< HEAD
         holder.articleView.setText(" " + article.getArticleAmount() + " " + "" + article.getArticleName() );
+=======
+        holder.articleView.setText("" + article.getArticleAmount() + " x " + article.getArticleName()  );
+>>>>>>> dev
         return convertView;
 
     }
