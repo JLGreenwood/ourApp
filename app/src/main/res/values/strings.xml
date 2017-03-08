@@ -16,7 +16,14 @@
     <string name="start">Verstanden</string>
 
     <string name="slide_1_title">Hallo lieber Erstbenutzer</string>
-    <string name="slide_1_desc">Wir freuen uns über dein Vertrauen </string>
+    <string name="slide_1_desc">Vielen Dank das du unsere App ausgesucht hast um dein Alltag zu Erleichtern.
+
+                                Im weiteren Tutorial Bekommst du ein Überblick der
+                                Funktionalität der App.
+
+    Wir Wünschen dir mit der App eine Lange Standhafte Zweisamkeit.
+
+    Pass gut auf die App auf, und Bitte benutze Sie jeden Tag, damit Sie auch ja immer ihre aufgaben erfüllt.</string>
 
     <string name="slide_2_title">Funktionen</string>
     <string name="slide_2_desc">Ist das nicht der Hammer!</string>
