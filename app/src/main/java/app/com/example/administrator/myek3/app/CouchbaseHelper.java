@@ -117,7 +117,6 @@ public class CouchbaseHelper {
      * the ShoppingList gets inserted the first time.
      *
      * TODO: Revise PLS!
-     * @param sl
      * @param id
      * @return
      */
@@ -141,7 +140,7 @@ public class CouchbaseHelper {
             }
         }
 
-        Map<ShoppingList, ArrayList<Article>> myShoppingList = (Map<ShoppingList, ArrayList<Article>>) doc.getProperty(sl.getShoppingListName());
+        Map<ShoppingList, ArrayList<Article>> myShoppingList = (Map<ShoppingList, ArrayList<Article>>) doc.getProperty(listName);
         Log.d(TAG, "ShoppingList: " + myShoppingList);
 
         /**

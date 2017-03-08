@@ -1,7 +1,5 @@
 package app.com.example.administrator.myek3.app;
 
-import android.util.Log;
-
 /**
  * Created by Darth Vader on 28.02.2017.
  * Die Klasse Artikel erstellt Produkt Objekte für die Einkaufslite her.
@@ -31,7 +29,7 @@ public class Article {
 
     public Article(String articleName){
         this.articleName = articleName;
-        this.articleAmount = "";
+        this.articleAmount = "1";
         this.articleUnit = "";
         this.articlePrice = 0.0;
         this.articleComment = "";
@@ -49,10 +47,10 @@ public class Article {
     public Article(String articleName, String articleAmount, boolean articleChecked){
         this.articleName = articleName;
         this.articleAmount = articleAmount;
-        this.articleChecked = articleChecked;
         this.articleUnit = "";
         this.articlePrice = 0.0;
         this.articleComment = "";
+        this.articleChecked = articleChecked;
     }
 
     public Article(String articleName, String articleAmount, String articleUnit){
@@ -83,17 +81,17 @@ public class Article {
     public void setArticleUnit(String articleUnit){
         this.articleUnit = articleUnit;
     }
+    public void setArticlePrice(double articlePrice){
+        this.articlePrice = articlePrice;
+    }
     public void setArticleComment(String articleComment) {
         this.articleComment = articleComment;
     }
     public void setArticleChecked(boolean articleChecked) {
         this.articleChecked = articleChecked;
     }
-    public void setArticlePrice(double articlePrice) {
-        this.articlePrice = articlePrice;
-    }
 
-// Getter()
+    // Getter()
     public String getArticleName() {
         return articleName;
     }
@@ -102,6 +100,9 @@ public class Article {
     }
     public String getArticleUnit() {
         return articleUnit;
+    }
+    public double getArticlePrice() {
+        return articlePrice;
     }
     public String getArticleComment() {
         return articleComment;

@@ -11,12 +11,5 @@
         android:orderInCategory="100"
         android:title="@string/action_rename"
         app:showAsAction="never" />
-<!--
-    <item
-        android:id="@+id/action_laden"
-        android:orderInCategory="100"
-        android:title="@string/action_laden"
-        app:showAsAction="never" />
-    -->
 </menu>
 
