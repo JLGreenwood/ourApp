@@ -1,6 +1,7 @@
 package app.com.example.administrator.myek3.app;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.jjoe64.graphview.GraphView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,7 +66,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         listView = (ListView) findViewById(R.id.eklist);
 
         articleName = (EditText) findViewById(R.id.input_artikel);
+        Typeface typeface = Typeface.createFromAsset(getAssets(), "Roboto-Medium.ttf");
+        articleName.setTypeface(typeface);
         articleAmount = (EditText) findViewById(R.id.input_anzahl);
+        articleAmount.setTypeface(typeface);
 
         switch (listViewSwitch) {
             case "articles":
@@ -103,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -124,12 +129,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             articleList.add(new Article(articleName.getText().toString(), amount , false));
 
                             articleAdapter.notifyDataSetChanged();
-                            Snackbar.make(view, "Replace with your own action!! " + amount, Snackbar.LENGTH_LONG)
+                            Snackbar.make(view, amount +" " + " "+articleName.getText()+ " Hinzugefügt! " , Snackbar.LENGTH_LONG)
                                     .setAction("Action", null).show();
                         }
                         articleName.setText("");
                         articleAmount.setText("");
-                        articleName.requestFocus();
+                        articleAmount.requestFocus();
                         break;
                     case "shoppingLists":
 
@@ -190,17 +195,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_context_menu, menu);
+        inflater.inflate(R.menu.main_context_menu, menu);{
+        }
+
     }
 
 
+
+//LONG PRESURE function
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         switch (item.getItemId())
         {
-            case R.id.delete_id:
+            case R.id.delete_id:  //DELETE
                 articleList.remove(info.position);
+                articleAdapter.notifyDataSetChanged();
+                return true;
+            case R.id.delete_all_id: //DELETE ALL
+                articleList.removeAll(articleList);
                 articleAdapter.notifyDataSetChanged();
                 return true;
             default:
@@ -237,7 +250,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_speichern) {
             return true;
         }
 
@@ -250,29 +263,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        if (id == R.id.nav_ekl) {
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_liste) {
 
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_view) {
-
-            Intent intent = new Intent(this, GraphV.class);
+        } else if (id == R.id.nav_statistik) {
+            Intent intent = new Intent (this, GraphView.class );
             startActivity(intent);
-            return true;
-        }
-        else if (id == R.id.nav_help) {
-
+        } else if (id == R.id.nav_tut) {
             Session mysession = new Session(this);
             mysession.setFirstTimeLaunch(true);
             Intent intent = new Intent(this, WelcomeActivity.class);
             startActivity(intent);
-        }
+        } else if (id == R.id.nav_imp) {
+
+    }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -314,4 +319,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
         client.disconnect();
     }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        Snackbar.make(findViewById(R.id.content_main), "Replace with your own action!! " , Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show();
+
+    }
+    @Override
+    public void onResume(){
+        super.onResume();
+        Snackbar.make(findViewById(R.id.content_main), "onResume " , Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show();
+
+    }
+
 }
