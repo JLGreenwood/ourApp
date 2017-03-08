@@ -321,7 +321,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 }
 
                                 arti.setArticleUnit(inputText4.getText().toString());
-                                arti.setArticleComment(inputText4.getText().toString());
+                                arti.setArticleComment(inputText5.getText().toString());
                                 arti.setArticleChecked(isSelected.isChecked());
                                 articleAdapter.notifyDataSetChanged();
                             }
