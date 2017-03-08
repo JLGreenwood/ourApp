@@ -44,9 +44,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     String listViewSwitch = "";
 
     List<Article> articleList;
-    List<ShoppingList> shoppingListList;
     ArticleAdapter articleAdapter;
-    ShoppingListAdapter shoppingListAdapter;
 
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -70,19 +68,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         articleAmount = (EditText) findViewById(R.id.input_anzahl);
         articleAmount.setTypeface(typeface);
 
-        switch (listViewSwitch) {
-            case "articles":
-                switchListViewToArticles();
-                break;
-            case "shoppingLists":
-                switchListViewToShoppingLists();
-                break;
-            default:
-                switchListViewToArticles();
-                break;
-
-        }
-             registerForContextMenu(listView);
+        switchListViewToArticles();
+        registerForContextMenu(listView);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -100,49 +87,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onClick(View view) {
 
-                switch (listViewSwitch) {
-                    default:
-                        if (articleName.getText().length() > 0) {
-                            articleAmount.requestFocus();
-                            String amount = articleAmount.getText().toString();
-                            if (amount.equals("") || amount.equals("0")) {
-                                amount = "1";
-                            }
-                            articleList.add(new Article(articleName.getText().toString(), amount , false));
-
-                            articleAdapter.notifyDataSetChanged();
-//                            Snackbar.make(view, "Replace with your own action!! " + amount, Snackbar.LENGTH_LONG)
-//                                    .setAction("Action", null).show();
-                        }
-                        articleName.setText("");
-                        articleAmount.setText("");
-                        articleName.requestFocus();
-                        break;
-                    case "shoppingLists":
-
-                        break;
-
+            if (articleName.getText().length() > 0) {
+                articleAmount.requestFocus();
+                String amount = articleAmount.getText().toString();
+                if (amount.equals("") || amount.equals("0")) {
+                    amount = "1";
                 }
+                articleList.add(new Article(articleName.getText().toString(), amount , false));
+                articleAdapter.notifyDataSetChanged();
+            }
+            articleName.setText("");
+            articleAmount.setText("");
+            articleName.requestFocus();
             }
         });
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                 Article art = articleList.get(position);
-
                 if (art.isArticleChecked()) {
-
                     art.setArticleChecked(false);
                     articleAdapter.notifyDataSetChanged();
-
                 }
                 else {
                     art.setArticleChecked(true);
                     articleAdapter.notifyDataSetChanged();
                 }
-
             }
         });
 
@@ -150,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
          * Initialize an instance of our databaseHelper class and call our methods.
          */
         CouchbaseHelper couchbaseHelper = new CouchbaseHelper(this);
-//        couchbaseHelper.createArticle();
+//       couchbaseHelper.createArticle();
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -240,7 +211,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (id == R.id.nav_ekl) {
 
         } else if (id == R.id.nav_liste) {
-
+            Intent i = new Intent(this, ListActivity.class);
+            startActivity(i);
         } else if (id == R.id.nav_statistik) {
       //      Intent intent = new Intent (this, GraphView.class );
       //      startActivity(intent);
@@ -304,24 +276,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         articleList = new ArrayList<Article>();
         articleAdapter = new ArticleAdapter(articleList, this);
         listView.setAdapter(articleAdapter);
-    }
-
-    public void switchListViewToShoppingLists () {
-        articleName.setVisibility(View.GONE);
-        articleAmount.setVisibility(View.GONE);
-        shoppingListList = new ArrayList<ShoppingList>();
-        shoppingListAdapter = new ShoppingListAdapter(shoppingListList, this);
-        listView.setAdapter(shoppingListAdapter);
-
-        ShoppingList unsavedShoppingList1 = new ShoppingList();
-        ShoppingList unsavedShoppingList2 = new ShoppingList("Party");
-        ShoppingList unsavedShoppingList3 = new ShoppingList("Kuchenrezept");
-        ShoppingList unsavedShoppingList4 = new ShoppingList();
-
-        shoppingListList.add(unsavedShoppingList1);
-        shoppingListList.add(unsavedShoppingList2);
-        shoppingListList.add(unsavedShoppingList3);
-        shoppingListList.add(unsavedShoppingList4);
-        shoppingListAdapter.notifyDataSetChanged();
     }
 }
