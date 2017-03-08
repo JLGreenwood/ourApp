@@ -21,47 +21,57 @@ public class Article {
 
 // Konstruktoren
     public Article() {
-        this.articleName = null;
-        this.articleAmount = "1";
-        this.articleUnit = null;
+        this.articleName = "";
+        this.articleAmount = "";
+        this.articleUnit = "";
         this.articlePrice = 0.0;
-        this.articleComment = null;
+        this.articleComment = "";
         this.articleChecked = false;
     }
 
     public Article(String articleName){
         this.articleName = articleName;
+        this.articleAmount = "";
+        this.articleUnit = "";
+        this.articlePrice = 0.0;
+        this.articleComment = "";
+        this.articleChecked = false;
     }
     public Article(String articleName, String articleAmount){
         this.articleName = articleName;
         this.articleAmount = articleAmount;
+        this.articleUnit = "";
+        this.articlePrice = 0.0;
+        this.articleComment = "";
+        this.articleChecked = false;
     }
+
     public Article(String articleName, String articleAmount, boolean articleChecked){
         this.articleName = articleName;
         this.articleAmount = articleAmount;
         this.articleChecked = articleChecked;
+        this.articleUnit = "";
+        this.articlePrice = 0.0;
+        this.articleComment = "";
     }
+
     public Article(String articleName, String articleAmount, String articleUnit){
         this.articleName = articleName;
         this.articleAmount = articleAmount;
         this.articleUnit = articleUnit;
+        this.articlePrice = 0.0;
+        this.articleComment = "";
+        this.articleChecked = false;
     }
+
     public Article(String articleName, String articleAmount, String articleUnit, double articlePrice, String articleComment){
         this.articleName = articleName;
         this.articleAmount = articleAmount;
         this.articleUnit = articleUnit;
         this.articlePrice = articlePrice;
         this.articleComment = articleComment;
+        this.articleChecked = false;
     }
-
-//    public Article(String articleAmount, String articleUnit, String articleComment, String articleName, boolean articleChecked){
-//        this.articleName = articleName;
-//        this.articleAmount = articleAmount;
-//        this.articleUnit = articleUnit;
-//        this.articleChecked = articleChecked;
-//        this.articleComment = articleComment;
-//    }
-
 
     // Setter()
     public void setArticleName(String articleName){
