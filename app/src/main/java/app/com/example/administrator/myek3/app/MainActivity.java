@@ -71,6 +71,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         articleAmount = (EditText) findViewById(R.id.input_anzahl);
         articleAmount.setTypeface(typeface);
 
+        if(getIntent().hasExtra("idx") == true)
+        {
+            long l = getIntent().getExtras().getLong("idx");
+            Toast toast = Toast.makeText(this, ""+l, Toast.LENGTH_SHORT);
+            toast.show();
+        }
+
         /**
          * Initialize an instance of our databaseHelper class and call our methods.
          */

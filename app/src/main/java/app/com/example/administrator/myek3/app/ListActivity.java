@@ -53,17 +53,22 @@ public class ListActivity extends AppCompatActivity
         fab = (FloatingActionButton) findViewById(R.id.fab_list);
         listView = (ListView) findViewById(R.id.listlist);
 
+        switchListViewToShoppingLists();
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // TODO: Maybe do something on click?
+                long idx = 1234;
+                Intent iActivity2 = new Intent(ctx, MainActivity.class);
+                iActivity2.putExtra("idx", idx);
+                startActivity(iActivity2);
             }
         });
 
         // Disabled because of unclear NullPointerException. Fix needed!!
         // registerForContextMenu(listView);
 
-        switchListViewToShoppingLists();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_list);
         setSupportActionBar(toolbar);
