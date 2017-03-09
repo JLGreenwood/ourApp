@@ -3,6 +3,7 @@ package app.com.example.administrator.myek3.app;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
@@ -19,7 +20,11 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static app.com.example.administrator.myek3.app.R.id.fab;
 
@@ -33,6 +38,7 @@ public class ListActivity extends AppCompatActivity
     ShoppingListAdapter shoppingListAdapter;
     ShoppingList sl;
     ArticleAdapter articleAdapter;
+    Map<String, String> superSecretList;
 
     Context ctx = null;
     private static final String TAG = ListActivity.class.getSimpleName();
@@ -47,21 +53,10 @@ public class ListActivity extends AppCompatActivity
         fab = (FloatingActionButton) findViewById(R.id.fab_list);
         listView = (ListView) findViewById(R.id.listlist);
 
-//        articleAdapter = new ArticleAdapter(sl.getShoppingListArticles(), this);
-//        listView.setAdapter(articleAdapter);
-
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Article art = sl.getShoppingListArticles().get(position);
-                if (art.isArticleChecked()) {
-//                    art.setArticleChecked(false);
-                    articleAdapter.notifyDataSetChanged();
-                }
-                else {
-//                    art.setArticleChecked(true);
-                    articleAdapter.notifyDataSetChanged();
-                }
+                // TODO: Maybe do something on click?
             }
         });
 
@@ -157,10 +152,13 @@ public class ListActivity extends AppCompatActivity
 
         CouchbaseHelper cbh = new CouchbaseHelper(this);
         ArrayList<String> docIds = cbh.getAllDocumentIds();
+        superSecretList = new HashMap<>();
 
-        for(String docId : docIds) {
-            Log.d(TAG, "docId: " + docId);
-            shoppingListList.add(cbh.getShoppingListById(docId));
+        for(int i = 0; i < docIds.size(); i++) {
+            Log.d(TAG, "docId: " + docIds.get(i));
+            shoppingListList.add(cbh.getShoppingListById(docIds.get(i)));
+            Log.d(TAG, "shoppingListList.get(0): " + shoppingListList.get(0).getShoppingListId());
+            superSecretList.put(docIds.get(i), cbh.getShoppingListById(docIds.get(i)).getShoppingListId());
         }
         shoppingListAdapter.notifyDataSetChanged();
     }
