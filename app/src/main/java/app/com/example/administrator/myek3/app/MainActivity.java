@@ -71,21 +71,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         articleAmount = (EditText) findViewById(R.id.input_anzahl);
         articleAmount.setTypeface(typeface);
 
-        if(getIntent().hasExtra("idx") == true)
+        if(getIntent().hasExtra("uid") == true)
         {
-            long l = getIntent().getExtras().getLong("idx");
-            Toast toast = Toast.makeText(this, ""+l, Toast.LENGTH_SHORT);
-            toast.show();
+            String l = getIntent().getExtras().getString("uid");
+            Log.d(TAG, "Uid in MainActivity: " + l);
+//            Toast toast = Toast.makeText(this, ""+l, Toast.LENGTH_SHORT);
+//            toast.show();
+            /**
+             * Initialize an instance of our databaseHelper class and call our methods.
+             */
+            couchbaseHelper = new CouchbaseHelper(this);
+
+            sl = new ShoppingList();
+            sl = couchbaseHelper.getShoppingListById(l);
+            articleAdapter = new ArticleAdapter(sl.getShoppingListArticles(), this);
+            listView.setAdapter(articleAdapter);
+            articleAdapter.notifyDataSetChanged();
+        } else {
+            /**
+             * Initialize an instance of our databaseHelper class and call our methods.
+             */
+            couchbaseHelper = new CouchbaseHelper(this);
+
+            sl = new ShoppingList();
+            articleAdapter = new ArticleAdapter(sl.getShoppingListArticles(), this);
+            listView.setAdapter(articleAdapter);
         }
 
-        /**
-         * Initialize an instance of our databaseHelper class and call our methods.
-         */
-        couchbaseHelper = new CouchbaseHelper(this);
-
-        sl = new ShoppingList();
-        articleAdapter = new ArticleAdapter(sl.getShoppingListArticles(), this);
-        listView.setAdapter(articleAdapter);
         listView.setOnItemLongClickListener(this);
 
         registerForContextMenu(listView);

@@ -22,6 +22,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -59,9 +60,18 @@ public class ListActivity extends AppCompatActivity
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // TODO: Maybe do something on click?
-                long idx = 1234;
+                // Position equals indexes linke in an array.
+                String uid = null;
+                Log.d(TAG, "TEST: " + position);
+                for (Map.Entry<String, String> entry : superSecretList.entrySet()) {
+                    Log.d(TAG, "Key : " + entry.getKey() + " Value : " + entry.getValue());
+                    if(Integer.toString(position) == entry.getKey()) {
+                        uid = entry.getValue();
+                    }
+                }
+                Log.d(TAG, "Uid: " + uid);
                 Intent iActivity2 = new Intent(ctx, MainActivity.class);
-                iActivity2.putExtra("idx", idx);
+                iActivity2.putExtra("uid", uid);
                 startActivity(iActivity2);
             }
         });
@@ -157,13 +167,13 @@ public class ListActivity extends AppCompatActivity
 
         CouchbaseHelper cbh = new CouchbaseHelper(this);
         ArrayList<String> docIds = cbh.getAllDocumentIds();
-        superSecretList = new HashMap<>();
+        superSecretList = new HashMap<String, String>();
 
         for(int i = 0; i < docIds.size(); i++) {
             Log.d(TAG, "docId: " + docIds.get(i));
             shoppingListList.add(cbh.getShoppingListById(docIds.get(i)));
             Log.d(TAG, "shoppingListList.get(0): " + shoppingListList.get(0).getShoppingListId());
-            superSecretList.put(docIds.get(i), cbh.getShoppingListById(docIds.get(i)).getShoppingListId());
+            superSecretList.put(Integer.toString(i), docIds.get(i));
         }
         shoppingListAdapter.notifyDataSetChanged();
     }
