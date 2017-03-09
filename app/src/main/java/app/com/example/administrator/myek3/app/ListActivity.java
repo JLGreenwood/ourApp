@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -34,6 +35,7 @@ public class ListActivity extends AppCompatActivity
     ArticleAdapter articleAdapter;
 
     Context ctx = null;
+    private static final String TAG = ListActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +47,8 @@ public class ListActivity extends AppCompatActivity
         fab = (FloatingActionButton) findViewById(R.id.fab_list);
         listView = (ListView) findViewById(R.id.listlist);
 
-        articleAdapter = new ArticleAdapter(sl.getShoppingListArticles(), this);
-        listView.setAdapter(articleAdapter);
+//        articleAdapter = new ArticleAdapter(sl.getShoppingListArticles(), this);
+//        listView.setAdapter(articleAdapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -148,6 +150,7 @@ public class ListActivity extends AppCompatActivity
     }
 
     public void switchListViewToShoppingLists() {
+        Log.d(TAG, "Calling switchListViewToShoppingLists()");
         shoppingListList = new ArrayList<ShoppingList>();
         shoppingListAdapter = new ShoppingListAdapter(shoppingListList, this);
         listView.setAdapter(shoppingListAdapter);
@@ -156,6 +159,7 @@ public class ListActivity extends AppCompatActivity
         ArrayList<String> docIds = cbh.getAllDocumentIds();
 
         for(String docId : docIds) {
+            Log.d(TAG, "docId: " + docId);
             shoppingListList.add(cbh.getShoppingListById(docId));
         }
         shoppingListAdapter.notifyDataSetChanged();
