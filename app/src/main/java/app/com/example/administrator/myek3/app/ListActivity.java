@@ -45,8 +45,8 @@ public class ListActivity extends AppCompatActivity
         fab = (FloatingActionButton) findViewById(R.id.fab_list);
         listView = (ListView) findViewById(R.id.listlist);
 
-        articleAdapter = new ArticleAdapter(sl.getShoppingListArticles(), this);
-        listView.setAdapter(articleAdapter);
+//        articleAdapter = new ArticleAdapter(sl.getShoppingListArticles(), this);
+//        listView.setAdapter(articleAdapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
