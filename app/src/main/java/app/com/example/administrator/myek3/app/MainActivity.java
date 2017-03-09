@@ -33,10 +33,8 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
         AdapterView.OnItemLongClickListener{
@@ -46,10 +44,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     FloatingActionButton fab;
     ListView listView;
 
-    // List<Article> articleList;
+//    List<Article> articleList;
     CouchbaseHelper couchbaseHelper;
-    String shoppingListId;
     ShoppingList sl;
+    String shoppingListId;
     ArticleAdapter articleAdapter;
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -103,17 +101,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (sl.getShoppingListId() == "") {
                     Log.d(TAG, "ShoppingList without shoppingListId.");
 
-                    //TODO: Generalize, find solution for avoiding code duplication.
+                    /**
+                     * TODO: Generalize, find solution for avoiding code duplication.
+                     */
                     if (articleName.getText().length() > 0) {
                         articleAmount.requestFocus();
                         String amount = articleAmount.getText().toString();
                         if (amount.equals("") || amount.equals("0")) {
                             amount = "1";
                         }
-
-                        sl.getShoppingListArticles().add(new Article(articleName.getText().toString(), amount, false));
+                        sl.getShoppingListArticles().add(new Article(articleName.getText().toString(), amount , false));
                         articleAdapter.notifyDataSetChanged();
-                        Snackbar.make(view, amount +" " + " "+articleName.getText()+ " Hinzugefügt! " , Snackbar.LENGTH_LONG)
+                        Snackbar.make(view, amount + " " + " " + articleName.getText() + " Hinzugefügt! " , Snackbar.LENGTH_LONG)
                                 .setAction("Action", null).show();
                     }
 
@@ -121,8 +120,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     sl.setShoppingListId(shoppingListId);
                     Log.d(TAG, "New shoppingListId: " + sl.getShoppingListId());
                 } else {
-                    Log.d(TAG, "shoppingListId: " + sl.getShoppingListId());
+                    Log.d(TAG, "ShoppingListId: " + sl.getShoppingListId());
 
+                    /**
+                     * TODO: Generalize, find solution for avoiding code duplication.
+                     */
+                    if (articleName.getText().length() > 0) {
+                        articleAmount.requestFocus();
+                        String amount = articleAmount.getText().toString();
+                        if (amount.equals("") || amount.equals("0")) {
+                            amount = "1";
+                        }
+                        sl.getShoppingListArticles().add(new Article(articleName.getText().toString(), amount , false));
+                        articleAdapter.notifyDataSetChanged();
+                        Snackbar.make(view, amount + " " + " " + articleName.getText() + " Hinzugefügt! " , Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                    }
+
+                    couchbaseHelper.updateShoppinglist(sl.getShoppingListId(), sl);
+                    Log.d(TAG, "New shoppingListId: " + sl.getShoppingListId());
                 }
                 articleName.setText("");
                 articleAmount.setText("");
@@ -130,7 +146,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
 
         });
-
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -146,22 +161,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
         });
-
-        Article art1 = new Article("Vakuumierer","9",false);
-        Article art2 = new Article("Panzertape","5");
-        Article art3 = new Article("5000W Birne","2",true);
-
-        List<Article> artArr = new ArrayList<>();
-        artArr.add(art1);
-        artArr.add(art2);
-        artArr.add(art3);
-
-        ShoppingList shoppingList = new ShoppingList("GrowForTheShow", (ArrayList<Article>) artArr);
-
-
-        //couchbaseHelper.addShoppingList(shoppingList);
-
-        ArrayList<String> docIds = couchbaseHelper.getAllDocumentIds();
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -200,7 +199,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_sort) {
             Collections.sort(sl.getShoppingListArticles(),new Comparator<Article>(){
-
                 @Override
                 public int compare(Article o1, Article o2) {
 
@@ -209,15 +207,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     } else {
                         return 1;
                     }
-
                 }
             });
-
             articleAdapter.notifyDataSetChanged();
-
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -240,8 +234,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             mysession.setFirstTimeLaunch(true);
             Intent intent = new Intent(this, WelcomeActivity.class);
             startActivity(intent);
-        // } else if (id == R.id.nav_imp) {
-
+//        } else if (id == R.id.nav_imp) {
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -359,7 +352,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 }
 
                                 arti.setArticleUnit(inputText4.getText().toString());
-                                arti.setArticleComment(inputText4.getText().toString());
+                                arti.setArticleComment(inputText5.getText().toString());
                                 arti.setArticleChecked(isSelected.isChecked());
                                 articleAdapter.notifyDataSetChanged();
                             }

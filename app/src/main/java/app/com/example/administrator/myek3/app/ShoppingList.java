@@ -24,7 +24,6 @@ public class ShoppingList implements Serializable {
 
     // Konstruktor
     public ShoppingList() {
-        //this.shoppingListName = new SimpleDateFormat("E yyyy.MM.dd 'at' hh:mm:ss a zzz").format(new Date()).toString();
         this.shoppingListName = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(new Date());
         this.shoppingListArticles = new ArrayList<>();
         this.shoppingListTotalPrice = 0.0;
