@@ -110,6 +110,18 @@ public class CouchbaseHelper {
         return document.getId();
     }
 
+    public void UpdateShoppingList (String id, ShoppingList shoppingList) {
+        Document doc = database.getDocument(id);
+        Map<String, Object> properties = new HashMap<String, Object>();
+        properties.putAll(doc.getProperties());
+        Map<String, Object> sl = new HashMap<String, Object>();
+        try {
+            doc.putProperties(properties);
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Expects two parameters firstly a shoppingList object and secondly a String containing
      * the shoppingLists id. Ensure to first insert the shoppingList into the database, otherwise
@@ -213,8 +225,11 @@ public class CouchbaseHelper {
      * This is an example on how to work on all existing documents which might be interesting
      * when working operations on the whole collection.
      */
-    public void getAllDocuments() {
+    public ArrayList<String> getAllDocumentIds() {
         Log.d(TAG, "Calling getAllDocuments.");
+
+        ArrayList<String> documentIdString = new ArrayList<String>();
+
         // Let's find all documents and print them to the console.
         Query query = database.createAllDocumentsQuery();
         query.setAllDocsMode(Query.AllDocsMode.ALL_DOCS);
@@ -227,19 +242,8 @@ public class CouchbaseHelper {
         for (Iterator<QueryRow> it = result; it.hasNext(); ) {
             QueryRow row = it.next();
             Log.d(TAG, String.format("%s. document: %s", row.getSequenceNumber(), row.getDocumentId()));
-
-            if(row.getDocumentId() != null) {
-                Document doc = database.getDocument(row.getDocumentId());
-                // We can directly access properties from the document object.
-                Log.d(TAG, "doc.getProperty(\"BananaList001\") " + doc.getProperty("BananaList001"));
-
-                Map<ShoppingList, ArrayList<Article>> testObject = (Map<ShoppingList, ArrayList<Article>>) doc.getProperty("BananaList001");
-                Log.d(TAG, "TESTOBJECT: " + testObject.getClass());
-                /**
-                 * Returns a java.util.ArrayList of articles.
-                 */
-                Log.d(TAG, "TESTOBJECT get shoppingListArticles: " + testObject.get("shoppingListArticles"));
-            }
+            documentIdString.add(row.getDocumentId());
         }
+        return documentIdString;
     }
 }

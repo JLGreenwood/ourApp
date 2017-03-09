@@ -14,6 +14,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -45,7 +46,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     FloatingActionButton fab;
     ListView listView;
 
-    List<Article> articleList;
+    // List<Article> articleList;
+    CouchbaseHelper couchbaseHelper;
+    String shoppingListId;
+    ShoppingList sl;
     ArticleAdapter articleAdapter;
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -69,8 +73,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         articleAmount = (EditText) findViewById(R.id.input_anzahl);
         articleAmount.setTypeface(typeface);
 
-        articleList = new ArrayList<Article>();
-        articleAdapter = new ArticleAdapter(articleList, this);
+        /**
+         * Initialize an instance of our databaseHelper class and call our methods.
+         */
+        couchbaseHelper = new CouchbaseHelper(this);
+
+        sl = new ShoppingList();
+        articleAdapter = new ArticleAdapter(sl.getShoppingListArticles(), this);
         listView.setAdapter(articleAdapter);
         listView.setOnItemLongClickListener(this);
 
@@ -91,27 +100,42 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (articleName.getText().length() > 0) {
-                    articleAmount.requestFocus();
-                    String amount = articleAmount.getText().toString();
-                    if (amount.equals("") || amount.equals("0")) {
-                        amount = "1";
+                if (sl.getShoppingListId() == "") {
+                    Log.d(TAG, "ShoppingList without shoppingListId.");
+
+                    //TODO: Generalize, find solution for avoiding code duplication.
+                    if (articleName.getText().length() > 0) {
+                        articleAmount.requestFocus();
+                        String amount = articleAmount.getText().toString();
+                        if (amount.equals("") || amount.equals("0")) {
+                            amount = "1";
+                        }
+
+                        sl.getShoppingListArticles().add(new Article(articleName.getText().toString(), amount, false));
+                        articleAdapter.notifyDataSetChanged();
+                        Snackbar.make(view, amount +" " + " "+articleName.getText()+ " Hinzugefügt! " , Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
                     }
-                    articleList.add(new Article(articleName.getText().toString(), amount , false));
-                    articleAdapter.notifyDataSetChanged();
-                    Snackbar.make(view, amount +" " + " "+articleName.getText()+ " Hinzugefügt! " , Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
+
+                    shoppingListId = couchbaseHelper.addShoppingList(sl);
+                    sl.setShoppingListId(shoppingListId);
+                    Log.d(TAG, "New shoppingListId: " + sl.getShoppingListId());
+                } else {
+                    Log.d(TAG, "shoppingListId: " + sl.getShoppingListId());
+
                 }
                 articleName.setText("");
                 articleAmount.setText("");
                 articleAmount.requestFocus();
             }
+
         });
+
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Article art = articleList.get(position);
+                Article art = sl.getShoppingListArticles().get(position);
                 if (art.isArticleChecked()) {
                     art.setArticleChecked(false);
                     articleAdapter.notifyDataSetChanged();
@@ -123,10 +147,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        /**
-         * Initialize an instance of our databaseHelper class and call our methods.
-         */
-        CouchbaseHelper couchbaseHelper = new CouchbaseHelper(this);
+        Article art1 = new Article("Vakuumierer","9",false);
+        Article art2 = new Article("Panzertape","5");
+        Article art3 = new Article("5000W Birne","2",true);
+
+        List<Article> artArr = new ArrayList<>();
+        artArr.add(art1);
+        artArr.add(art2);
+        artArr.add(art3);
+
+        ShoppingList shoppingList = new ShoppingList("GrowForTheShow", (ArrayList<Article>) artArr);
+
+
+        //couchbaseHelper.addShoppingList(shoppingList);
+
+        ArrayList<String> docIds = couchbaseHelper.getAllDocumentIds();
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -164,7 +199,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_sort) {
-            Collections.sort(articleList,new Comparator<Article>(){
+            Collections.sort(sl.getShoppingListArticles(),new Comparator<Article>(){
 
                 @Override
                 public int compare(Article o1, Article o2) {
@@ -198,16 +233,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Intent i = new Intent(this, ListActivity.class);
             startActivity(i);
         } else if (id == R.id.nav_statistik) {
-            Intent intent = new Intent (this, GraphV.class );
+            Intent intent = new Intent (this, GraphV.class);
             startActivity(intent);
         } else if (id == R.id.nav_tut) {
             Session mysession = new Session(this);
             mysession.setFirstTimeLaunch(true);
             Intent intent = new Intent(this, WelcomeActivity.class);
             startActivity(intent);
-        } else if (id == R.id.nav_imp) {
+        // } else if (id == R.id.nav_imp) {
 
-    }
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -257,31 +292,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (item.getItemId()) {
 
             case R.id.context_delete:
-                this.articleList.remove(position);
+                this.sl.getShoppingListArticles().remove(position);
                 this.articleAdapter.notifyDataSetChanged();
                 break;
             case R.id.context_edit:
 
-                createEditDialog(articleList.get(position));
+                createEditDialog(sl.getShoppingListArticles().get(position));
                 break;
         }
         return super.onContextItemSelected(item);
     }
+
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
         view.getContext();
         registerForContextMenu(listView);
 
-        Toast.makeText(MainActivity.this, articleList.get(position).getArticleName(),Toast.LENGTH_SHORT).show();
+        Toast.makeText(MainActivity.this, sl.getShoppingListArticles().get(position).getArticleName(),Toast.LENGTH_SHORT).show();
         //createEditDialog(articleList.get(position));
         return false;
     }
+
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
 
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.context_menu, menu);
     }
+
     public void createEditDialog(final Article arti) {
 
         LayoutInflater li = LayoutInflater.from(MainActivity.this);

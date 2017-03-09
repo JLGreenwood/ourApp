@@ -21,14 +21,15 @@ public class ShoppingList implements Serializable {
     private double shoppingListTotalPrice;
     private boolean shoppingListCompleted;
     private String shoppingListId;
-//    private static int listenNumber = 0;
 
     // Konstruktor
     public ShoppingList() {
         //this.shoppingListName = new SimpleDateFormat("E yyyy.MM.dd 'at' hh:mm:ss a zzz").format(new Date()).toString();
         this.shoppingListName = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(new Date());
+        this.shoppingListArticles = new ArrayList<>();
         this.shoppingListTotalPrice = 0.0;
         this.shoppingListCompleted = false;
+        this.shoppingListId = "";
     }
     public ShoppingList(String shoppingListName) {
         this.shoppingListName = shoppingListName;
@@ -40,6 +41,7 @@ public class ShoppingList implements Serializable {
         this.shoppingListArticles = shoppingListArticles;
         this.shoppingListTotalPrice = 0.0;
         this.shoppingListCompleted = false;
+        this.shoppingListId = "";
     }
     public ShoppingList(String shoppingListName, ArrayList<Article> shoppingListArticles, double shoppingListTotalPrice) {
         this.shoppingListName = shoppingListName;
