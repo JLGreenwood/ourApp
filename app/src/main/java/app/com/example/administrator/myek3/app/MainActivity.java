@@ -33,8 +33,6 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 
@@ -114,32 +112,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (shoppingList.getShoppingListId() == "") {
-                    Log.d(TAG, "ShoppingList without shoppingListId.");
-                    shoppingListId = couchbaseHelper.addShoppingList(shoppingList);
-                    shoppingList.setShoppingListId(shoppingListId);
-                    Log.d(TAG, "New shoppingListId: " + shoppingList.getShoppingListId());
-                } else {
-                    Log.d(TAG, "ShoppingListId: " + shoppingList.getShoppingListId());
-                }
-
                 String amount = articleAmount.getText().toString();
+                articleAmount.requestFocus();
                 if (articleName.getText().length() > 0) {
-                    articleAmount.requestFocus();
                     if (amount.equals("") || amount.equals("0")) {
                         amount = "1";
                     }
+                    if (shoppingList.getShoppingListId() == "") {
+                        Log.d(TAG, "ShoppingList without shoppingListId.");
+                        shoppingListId = couchbaseHelper.addShoppingList(shoppingList);
+                        shoppingList.setShoppingListId(shoppingListId);
+                        Log.d(TAG, "New shoppingListId: " + shoppingList.getShoppingListId());
+                    } else {
+                        Log.d(TAG, "ShoppingListId: " + shoppingList.getShoppingListId());
+                    }
+
                     shoppingList.getShoppingListArticles().add(new Article(articleName.getText().toString(), amount , false));
+                    couchbaseHelper.updateShoppingList(shoppingList.getShoppingListId(), shoppingList);
                     Snackbar.make(view, amount + " " + " " + articleName.getText() + " Hinzugefügt! " , Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
+                    articleName.setText("");
+                    articleAmount.setText("");
+                    articleAmount.requestFocus();
+                } else {
+                    Toast.makeText(view.getContext(), "Bitte Artikel eingeben",Toast.LENGTH_LONG).show();
+                    articleName.requestFocus();
                 }
-                couchbaseHelper.updateShoppinglist(shoppingList.getShoppingListId(), shoppingList);
                 articleAdapter.notifyDataSetChanged();
-                Toast.makeText(view.getContext(), "Neuer Artikel erstellt",Toast.LENGTH_SHORT).show();
-
-                articleName.setText("");
-                articleAmount.setText("");
-                articleAmount.requestFocus();
             }
         });
 
@@ -153,6 +152,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 else {
                     art.setArticleChecked(true);
                 }
+                couchbaseHelper.updateShoppingList(shoppingList.getShoppingListId(), shoppingList);
                 articleAdapter.notifyDataSetChanged();
             }
         });
@@ -192,30 +192,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_sort) {
-            articleList = CheckData.articleListSort(articleList);
-            shoppingList.setShoppingListArticles(CheckData.articleListSort(shoppingList.getShoppingListArticles()));
-            //Toast.makeText(MainActivity.this, "Neuer Artikel erstellt",Toast.LENGTH_SHORT).show();
-            articleAdapter.notifyDataSetChanged();
-            return true;
-        }
+//        if (id == R.id.action_sort) {
+//            articleList = CheckData.articleListSort(articleList);
+//            shoppingList.setShoppingListArticles(CheckData.articleListSort(shoppingList.getShoppingListArticles()));
+//            //Toast.makeText(MainActivity.this, "Neuer Artikel erstellt",Toast.LENGTH_SHORT).show();
+//            articleAdapter.notifyDataSetChanged();
+//            return true;
+//        }
         if (id == R.id.action_rename){
             return true;
         }
-        if (id == R.id.action_load){
-            //ShoppingList shop = saver.loadShoppingliste();
-            articleList.addAll(saver.loadShoppingliste().getShoppingListArticles());
-            setTitle("shop.getShoppingListName()");
-            articleAdapter.notifyDataSetChanged();
-            return true;
-        }
-
-        if (id == R.id.action_save){
-            saver.saveShoppingliste(shoppingList);
-            Toast.makeText(MainActivity.this, "Neuer Artikel erstellt",Toast.LENGTH_SHORT).show();
-            articleAdapter.notifyDataSetChanged();
-            return true;
-        }
+//        if (id == R.id.action_load){
+//            //ShoppingList shop = saver.loadShoppingliste();
+//            articleList.addAll(saver.loadShoppingliste().getShoppingListArticles());
+//            setTitle("shop.getShoppingListName()");
+//            articleAdapter.notifyDataSetChanged();
+//            return true;
+//        }
+//
+//        if (id == R.id.action_save){
+//            saver.saveShoppingliste(shoppingList);
+//            Toast.makeText(MainActivity.this, "Neuer Artikel erstellt",Toast.LENGTH_SHORT).show();
+//            articleAdapter.notifyDataSetChanged();
+//            return true;
+//        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -303,10 +303,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             case R.id.context_delete:
                 this.shoppingList.getShoppingListArticles().remove(position);
+
                 this.articleAdapter.notifyDataSetChanged();
                 break;
             case R.id.context_edit:
-
                 createEditDialog(shoppingList.getShoppingListArticles().get(position));
                 break;
         }
@@ -315,9 +315,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-
         registerForContextMenu(listView);
-        Toast.makeText(view.getContext(), "Artikel bearbeiten",Toast.LENGTH_SHORT).show();
+//        Toast.makeText(view.getContext(), "Artikel bearbeiten",Toast.LENGTH_SHORT).show();
         return false;
     }
     public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
@@ -354,19 +353,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         alertDialogBuilder
                 .setCancelable(true)
-                .setPositiveButton("Save",
+                .setPositiveButton("Speichern",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                arti.setArticleName(inputText1.getText().toString());
+                                if (!inputText1.getText().toString().equals("")) {
+                                    arti.setArticleName(inputText1.getText().toString());
+                                }
+                                if (inputText2.getText().toString().equals("") || inputText2.getText().toString().equals("0")) {
+                                    inputText2.setText("1");
+                                }
                                 arti.setArticleAmount(inputText2.getText().toString());
                                 arti.setArticlePrice(CheckData.formatData(inputText3.getText().toString()));
                                 arti.setArticleUnit(inputText4.getText().toString());
                                 arti.setArticleComment(inputText5.getText().toString());
                                 arti.setArticleChecked(isSelected.isChecked());
+                                couchbaseHelper.updateShoppingList(shoppingList.getShoppingListId(), shoppingList);
                                 articleAdapter.notifyDataSetChanged();
                             }
                         })
-                .setNegativeButton("Cancel",
+                .setNegativeButton("Abbrechen",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.cancel();

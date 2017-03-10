@@ -97,18 +97,6 @@ public class CouchbaseHelper {
         return document.getId();
     }
 
-    public void UpdateShoppingList (String id, ShoppingList shoppingList) {
-        Document doc = database.getDocument(id);
-        Map<String, Object> properties = new HashMap<String, Object>();
-        properties.putAll(doc.getProperties());
-        Map<String, Object> sl = new HashMap<String, Object>();
-        try {
-            doc.putProperties(properties);
-        } catch (CouchbaseLiteException e) {
-            e.printStackTrace();
-        }
-    }
-
     /**
      * Expects two parameters, an id and a valid shoppingList object. The id is used to find an
      * existing document within our database. We retrieve that document and overwrite that with
@@ -117,7 +105,7 @@ public class CouchbaseHelper {
      * @param id
      * @param shoppingList
      */
-    public void updateShoppinglist(String id, ShoppingList shoppingList) {
+    public void updateShoppingList(String id, ShoppingList shoppingList) {
         Document doc = database.getDocument(id);
         Map<String, Object> properties = new HashMap<String, Object>();
         properties.putAll(doc.getProperties());
@@ -204,7 +192,7 @@ public class CouchbaseHelper {
             }
             articleList.add(article);
         }
-        shoppingList = new ShoppingList(listName, (ArrayList<Article>) articleList);
+        shoppingList = new ShoppingList(id, listName, (ArrayList<Article>) articleList);
         return shoppingList;
     }
 

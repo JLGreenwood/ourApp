@@ -49,6 +49,13 @@ public class ShoppingList implements Serializable {
         this.shoppingListCompleted = false;
         this.shoppingListId = "";
     }
+    public ShoppingList(String shoppingListId, String shoppingListName, ArrayList<Article> shoppingListArticles) {
+        this.shoppingListName = shoppingListName;
+        this.shoppingListArticles = shoppingListArticles;
+        this.shoppingListTotalPrice = "0.00";
+        this.shoppingListCompleted = false;
+        this.shoppingListId = shoppingListId;
+    }
     public ShoppingList(String shoppingListName, ArrayList<Article> shoppingListArticles, String shoppingListTotalPrice) {
         this.shoppingListName = shoppingListName;
         this.shoppingListArticles = shoppingListArticles;

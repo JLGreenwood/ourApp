@@ -58,7 +58,11 @@ public class ArticleAdapter extends BaseAdapter{
             holder = (ArticleAdapter.ViewHolder)convertView.getTag();
         }
         article = (Article)getItem(position);
-        holder.articleView.setText("" + article.getArticleName() + " (" + article.getArticleAmount() + ")");
+        String articlePrice = "";
+        if (!article.getArticlePrice().equals("0.00 €")) {
+            articlePrice = article.getArticlePrice();
+        }
+        holder.articleView.setText("" + article.getArticleName() + " (" + article.getArticleAmount() + ") ");
         holder.a = article.isArticleChecked();
 
         if (this.articleList.get(position).isArticleChecked()) {
