@@ -15,34 +15,37 @@ import java.text.DateFormat;
  */
 
 public class ShoppingList implements Serializable {
+    //private static final long serialVersionUID = -4783110522368225L;
     // Attribute
     private String shoppingListName;
-    private ArrayList<Article> shoppingListArticles;
-    private double shoppingListTotalPrice;
+    private String shoppingListTotalPrice;
     private boolean shoppingListCompleted;
     private String shoppingListId;
+    private ArrayList<Article> shoppingListArticles;
+//    private static int listenNumber = 0;
 
     // Konstruktor
     public ShoppingList() {
         this.shoppingListName = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(new Date());
-        this.shoppingListArticles = new ArrayList<>();
-        this.shoppingListTotalPrice = 0.0;
+        this.shoppingListTotalPrice = "0.00";
+        this.shoppingListArticles = new ArrayList<Article>();
         this.shoppingListCompleted = false;
         this.shoppingListId = "";
     }
     public ShoppingList(String shoppingListName) {
         this.shoppingListName = shoppingListName;
-        this.shoppingListTotalPrice = 0.0;
+        this.shoppingListTotalPrice = "0.00";
         this.shoppingListCompleted = false;
+        this.shoppingListArticles = new ArrayList<Article>();
     }
     public ShoppingList(String shoppingListName, ArrayList<Article> shoppingListArticles) {
         this.shoppingListName = shoppingListName;
         this.shoppingListArticles = shoppingListArticles;
-        this.shoppingListTotalPrice = 0.0;
+        this.shoppingListTotalPrice = "0.00";
         this.shoppingListCompleted = false;
         this.shoppingListId = "";
     }
-    public ShoppingList(String shoppingListName, ArrayList<Article> shoppingListArticles, double shoppingListTotalPrice) {
+    public ShoppingList(String shoppingListName, ArrayList<Article> shoppingListArticles, String shoppingListTotalPrice) {
         this.shoppingListName = shoppingListName;
         this.shoppingListArticles = shoppingListArticles;
         this.shoppingListTotalPrice = shoppingListTotalPrice;
@@ -53,10 +56,13 @@ public class ShoppingList implements Serializable {
     public void setShoppingListName(String shoppingListName) {
         this.shoppingListName = shoppingListName;
     }
+    public void setShoppinglistSingelArtikel(Article article){
+        this.shoppingListArticles.add(article);
+    }
     public void setShoppingListArticles(ArrayList<Article> shoppingListArticles) {
         this.shoppingListArticles = shoppingListArticles;
     }
-    public void setShoppingListTotalPrice(double shoppingListTotalPrice) {
+    public void setShoppingListTotalPrice(String shoppingListTotalPrice) {
         this.shoppingListTotalPrice = shoppingListTotalPrice;
     }
     public void setShoppingListCompleted(boolean shoppingListCompleted) {
@@ -76,10 +82,13 @@ public class ShoppingList implements Serializable {
     public Article getShoppingListArticleById(int position) {
         return this.shoppingListArticles.get(position);
     }
+    public int getSoppinglistArticlePostition(Article article){
+        return this.shoppingListArticles.indexOf(article);
+    }
     public int getShoppingListArticleCount() {
         return shoppingListArticles.size();
     }
-    public double getShoppingListTotalPrice() {
+    public String getShoppingListTotalPrice() {
         return shoppingListTotalPrice;
     }
     public boolean isShoppingListCompleted() {

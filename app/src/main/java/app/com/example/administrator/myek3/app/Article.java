@@ -1,5 +1,7 @@
 package app.com.example.administrator.myek3.app;
 
+import java.io.Serializable;
+
 /**
  * Created by Darth Vader on 28.02.2017.
  * Die Klasse Artikel erstellt Produkt Objekte für die Einkaufslite her.
@@ -7,13 +9,13 @@ package app.com.example.administrator.myek3.app;
  * ihre Attribute ändern
  */
 
-public class Article {
-
+public class Article implements Serializable{
+    //private static final long serialVersionUID = -4783110522368225L;
 // Attribute
     private String articleName;
     private String articleAmount;
     private String articleUnit;
-    private double articlePrice;
+    private String articlePrice;
     private String articleComment;
     private boolean articleChecked;
 
@@ -22,7 +24,7 @@ public class Article {
         this.articleName = "";
         this.articleAmount = "";
         this.articleUnit = "";
-        this.articlePrice = 0.0;
+        this.articlePrice = "0.00 €";
         this.articleComment = "";
         this.articleChecked = false;
     }
@@ -31,7 +33,7 @@ public class Article {
         this.articleName = articleName;
         this.articleAmount = "1";
         this.articleUnit = "";
-        this.articlePrice = 0.0;
+        this.articlePrice = "0.00 €";
         this.articleComment = "";
         this.articleChecked = false;
     }
@@ -39,7 +41,7 @@ public class Article {
         this.articleName = articleName;
         this.articleAmount = articleAmount;
         this.articleUnit = "";
-        this.articlePrice = 0.0;
+        this.articlePrice = "0.00 €";
         this.articleComment = "";
         this.articleChecked = false;
     }
@@ -48,7 +50,7 @@ public class Article {
         this.articleName = articleName;
         this.articleAmount = articleAmount;
         this.articleUnit = "";
-        this.articlePrice = 0.0;
+        this.articlePrice = "0.00 €";
         this.articleComment = "";
         this.articleChecked = articleChecked;
     }
@@ -57,12 +59,12 @@ public class Article {
         this.articleName = articleName;
         this.articleAmount = articleAmount;
         this.articleUnit = articleUnit;
-        this.articlePrice = 0.0;
+        this.articlePrice = "0.00 €";
         this.articleComment = "";
         this.articleChecked = false;
     }
 
-    public Article(String articleName, String articleAmount, String articleUnit, double articlePrice, String articleComment){
+    public Article(String articleName, String articleAmount, String articleUnit, String articlePrice, String articleComment){
         this.articleName = articleName;
         this.articleAmount = articleAmount;
         this.articleUnit = articleUnit;
@@ -81,7 +83,7 @@ public class Article {
     public void setArticleUnit(String articleUnit){
         this.articleUnit = articleUnit;
     }
-    public void setArticlePrice(double articlePrice){
+    public void setArticlePrice(String articlePrice){
         this.articlePrice = articlePrice;
     }
     public void setArticleComment(String articleComment) {
@@ -101,7 +103,7 @@ public class Article {
     public String getArticleUnit() {
         return articleUnit;
     }
-    public double getArticlePrice() {
+    public String getArticlePrice() {
         return articlePrice;
     }
     public String getArticleComment() {

@@ -22,9 +22,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,22 +35,32 @@ import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
+
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
         AdapterView.OnItemLongClickListener{
+
+    private static final String TAG = "MainActivity";
 
     EditText articleName;
     EditText articleAmount;
     FloatingActionButton fab;
     ListView listView;
 
-//    List<Article> articleList;
+    ShoppingList shoppingList;
+    List<Article> articleList;
+
+
     CouchbaseHelper couchbaseHelper;
     ShoppingList sl;
     String shoppingListId;
-    ArticleAdapter articleAdapter;
 
-    private static final String TAG = MainActivity.class.getSimpleName();
+    ArticleAdapter articleAdapter;
+    Saver saver;
+    static int counter = 1;
+
+    //private static final String TAG = MainActivity.class.getSimpleName();
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -61,6 +71,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        saver = new Saver();
+        shoppingList = new ShoppingList("unbenannteliste " + counter++);
+        setTitle(shoppingList.getShoppingListName());
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         listView = (ListView) findViewById(R.id.eklist);
@@ -71,14 +84,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         articleAmount = (EditText) findViewById(R.id.input_anzahl);
         articleAmount.setTypeface(typeface);
 
-        /**
-         * Initialize an instance of our databaseHelper class and call our methods.
-         */
-        couchbaseHelper = new CouchbaseHelper(this);
+        if(getIntent().hasExtra("uid") == true)
+        {
+            String l = getIntent().getExtras().getString("uid");
+            Log.d(TAG, "Uid in MainActivity: " + l);
+//            Toast toast = Toast.makeText(this, ""+l, Toast.LENGTH_SHORT);
+//            toast.show();
+            /**
+             * Initialize an instance of our databaseHelper class and call our methods.
+             */
+            couchbaseHelper = new CouchbaseHelper(this);
 
-        sl = new ShoppingList();
-        articleAdapter = new ArticleAdapter(sl.getShoppingListArticles(), this);
-        listView.setAdapter(articleAdapter);
+            sl = new ShoppingList();
+            sl = couchbaseHelper.getShoppingListById(l);
+            articleAdapter = new ArticleAdapter(sl.getShoppingListArticles(), this);
+            listView.setAdapter(articleAdapter);
+            articleAdapter.notifyDataSetChanged();
+        } else {
+            /**
+             * Initialize an instance of our databaseHelper class and call our methods.
+             */
+            couchbaseHelper = new CouchbaseHelper(this);
+
+            sl = new ShoppingList();
+            articleAdapter = new ArticleAdapter(sl.getShoppingListArticles(), this);
+            listView.setAdapter(articleAdapter);
+        }
+
         listView.setOnItemLongClickListener(this);
 
         registerForContextMenu(listView);
@@ -104,9 +136,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     /**
                      * TODO: Generalize, find solution for avoiding code duplication.
                      */
+                    String amount = articleAmount.getText().toString();
                     if (articleName.getText().length() > 0) {
                         articleAmount.requestFocus();
-                        String amount = articleAmount.getText().toString();
                         if (amount.equals("") || amount.equals("0")) {
                             amount = "1";
                         }
@@ -115,6 +147,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         Snackbar.make(view, amount + " " + " " + articleName.getText() + " Hinzugefügt! " , Snackbar.LENGTH_LONG)
                                 .setAction("Action", null).show();
                     }
+                    Article tmpArticle = new Article(articleName.getText().toString(), amount , false);
+                    articleList.add(tmpArticle);
+                    shoppingList.setShoppinglistSingelArtikel(tmpArticle);
+                    articleAdapter.notifyDataSetChanged();
+                    Toast.makeText(view.getContext(), "Neues Artikel erstellt",Toast.LENGTH_SHORT).show();
 
                     shoppingListId = couchbaseHelper.addShoppingList(sl);
                     sl.setShoppingListId(shoppingListId);
@@ -198,17 +235,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_sort) {
-            Collections.sort(sl.getShoppingListArticles(),new Comparator<Article>(){
-                @Override
-                public int compare(Article o1, Article o2) {
+            articleList = CheckData.articleListSort(articleList);
+            shoppingList.setShoppingListArticles(CheckData.articleListSort(shoppingList.getShoppingListArticles()));
+            //Toast.makeText(MainActivity.this, "Neuer Artikel erstellt",Toast.LENGTH_SHORT).show();
+            articleAdapter.notifyDataSetChanged();
+            return true;
+        }
+        if (id == R.id.action_rename){
+            return true;
+        }
+        if (id == R.id.action_load){
+            //ShoppingList shop = saver.loadShoppingliste();
+            articleList.addAll(saver.loadShoppingliste().getShoppingListArticles());
+            setTitle("shop.getShoppingListName()");
+            articleAdapter.notifyDataSetChanged();
+            return true;
+        }
 
-                    if (o1.getArticleName().compareTo(o2.getArticleName()) < 0) {
-                        return -1;
-                    } else {
-                        return 1;
-                    }
-                }
-            });
+        if (id == R.id.action_save){
+            saver.saveShoppingliste(shoppingList);
+            Toast.makeText(MainActivity.this, "Neues Artikel erstellt",Toast.LENGTH_SHORT).show();
             articleAdapter.notifyDataSetChanged();
             return true;
         }
@@ -298,17 +344,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        view.getContext();
-        registerForContextMenu(listView);
 
-        Toast.makeText(MainActivity.this, sl.getShoppingListArticles().get(position).getArticleName(),Toast.LENGTH_SHORT).show();
-        //createEditDialog(articleList.get(position));
+        registerForContextMenu(listView);
+        Toast.makeText(view.getContext(), "Artikel bearbeiten",Toast.LENGTH_SHORT).show();
         return false;
     }
-
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-
+    public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, view, menuInfo);
+        //createEditDialog(articleList.get(position));
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.context_menu, menu);
     }
@@ -345,12 +388,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             public void onClick(DialogInterface dialog, int id) {
                                 arti.setArticleName(inputText1.getText().toString());
                                 arti.setArticleAmount(inputText2.getText().toString());
-                                if(inputText3.getText().toString().equals("")){
-                                    arti.setArticlePrice(0);
-                                }else{
-                                    arti.setArticlePrice(CheckData.formatData(Double.parseDouble(inputText3.getText().toString())));
-                                }
-
+                                arti.setArticlePrice(CheckData.formatData(inputText3.getText().toString()));
                                 arti.setArticleUnit(inputText4.getText().toString());
                                 arti.setArticleComment(inputText5.getText().toString());
                                 arti.setArticleChecked(isSelected.isChecked());

@@ -3,8 +3,10 @@ package app.com.example.administrator.myek3.app;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -18,7 +20,12 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static app.com.example.administrator.myek3.app.R.id.fab;
 
@@ -32,8 +39,10 @@ public class ListActivity extends AppCompatActivity
     ShoppingListAdapter shoppingListAdapter;
     ShoppingList sl;
     ArticleAdapter articleAdapter;
+    Map<String, String> superSecretList;
 
     Context ctx = null;
+    private static final String TAG = ListActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,28 +54,29 @@ public class ListActivity extends AppCompatActivity
         fab = (FloatingActionButton) findViewById(R.id.fab_list);
         listView = (ListView) findViewById(R.id.listlist);
 
-//        articleAdapter = new ArticleAdapter(sl.getShoppingListArticles(), this);
-//        listView.setAdapter(articleAdapter);
-
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Article art = sl.getShoppingListArticles().get(position);
-                if (art.isArticleChecked()) {
-//                    art.setArticleChecked(false);
-                    articleAdapter.notifyDataSetChanged();
+                // TODO: Maybe do something on click?
+                // Position equals indexes linke in an array.
+                String uid = null;
+                Log.d(TAG, "TEST: " + position);
+                for (Map.Entry<String, String> entry : superSecretList.entrySet()) {
+                    Log.d(TAG, "Key : " + entry.getKey() + " Value : " + entry.getValue());
+                    if(Integer.toString(position) == entry.getKey()) {
+                        uid = entry.getValue();
+                    }
                 }
-                else {
-//                    art.setArticleChecked(true);
-                    articleAdapter.notifyDataSetChanged();
-                }
+                Log.d(TAG, "Uid: " + uid);
+                Intent iActivity2 = new Intent(ctx, MainActivity.class);
+                iActivity2.putExtra("uid", uid);
+                startActivity(iActivity2);
             }
         });
 
         // Disabled because of unclear NullPointerException. Fix needed!!
         // registerForContextMenu(listView);
 
-        switchListViewToShoppingLists();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_list);
         setSupportActionBar(toolbar);
@@ -148,15 +158,20 @@ public class ListActivity extends AppCompatActivity
     }
 
     public void switchListViewToShoppingLists() {
+        Log.d(TAG, "Calling switchListViewToShoppingLists()");
         shoppingListList = new ArrayList<ShoppingList>();
         shoppingListAdapter = new ShoppingListAdapter(shoppingListList, this);
         listView.setAdapter(shoppingListAdapter);
 
         CouchbaseHelper cbh = new CouchbaseHelper(this);
         ArrayList<String> docIds = cbh.getAllDocumentIds();
+        superSecretList = new HashMap<String, String>();
 
-        for(String docId : docIds) {
-            shoppingListList.add(cbh.getShoppingListById(docId));
+        for(int i = 0; i < docIds.size(); i++) {
+            Log.d(TAG, "docId: " + docIds.get(i));
+            shoppingListList.add(cbh.getShoppingListById(docIds.get(i)));
+            Log.d(TAG, "shoppingListList.get(0): " + shoppingListList.get(0).getShoppingListId());
+            superSecretList.put(Integer.toString(i), docIds.get(i));
         }
         shoppingListAdapter.notifyDataSetChanged();
     }
