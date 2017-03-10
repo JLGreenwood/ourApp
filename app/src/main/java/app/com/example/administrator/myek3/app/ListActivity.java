@@ -37,8 +37,6 @@ public class ListActivity extends AppCompatActivity
 
     List<ShoppingList> shoppingListList;
     ShoppingListAdapter shoppingListAdapter;
-    ShoppingList sl;
-    ArticleAdapter articleAdapter;
     Map<String, String> superSecretList;
 
     Context ctx = null;
@@ -53,6 +51,8 @@ public class ListActivity extends AppCompatActivity
 
         fab = (FloatingActionButton) findViewById(R.id.fab_list);
         listView = (ListView) findViewById(R.id.listlist);
+
+        switchListViewToShoppingLists();
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

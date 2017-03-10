@@ -51,14 +51,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ShoppingList shoppingList;
     List<Article> articleList;
 
-
     CouchbaseHelper couchbaseHelper;
-    ShoppingList sl;
     String shoppingListId;
 
     ArticleAdapter articleAdapter;
     Saver saver;
-    static int counter = 1;
 
     //private static final String TAG = MainActivity.class.getSimpleName();
     /**
@@ -71,43 +68,41 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        shoppingList = new ShoppingList();
+        couchbaseHelper = new CouchbaseHelper(this);
         saver = new Saver();
-        shoppingList = new ShoppingList("unbenannteliste " + counter++);
-        setTitle(shoppingList.getShoppingListName());
+
+        String shoppingListTitle = shoppingList.getShoppingListName();
+        setTitle(shoppingListTitle);
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         listView = (ListView) findViewById(R.id.eklist);
 
-        articleName = (EditText) findViewById(R.id.input_artikel);
         Typeface typeface = Typeface.createFromAsset(getAssets(), "Roboto-Medium.ttf");
+        articleName = (EditText) findViewById(R.id.input_artikel);
         articleName.setTypeface(typeface);
         articleAmount = (EditText) findViewById(R.id.input_anzahl);
         articleAmount.setTypeface(typeface);
 
-        if(getIntent().hasExtra("uid") == true)
+        if(getIntent().hasExtra("uid"))
         {
             String l = getIntent().getExtras().getString("uid");
             Log.d(TAG, "Uid in MainActivity: " + l);
 //            Toast toast = Toast.makeText(this, ""+l, Toast.LENGTH_SHORT);
 //            toast.show();
             /**
-             * Initialize an instance of our databaseHelper class and call our methods.
+             *
              */
-            couchbaseHelper = new CouchbaseHelper(this);
-
-            sl = new ShoppingList();
-            sl = couchbaseHelper.getShoppingListById(l);
-            articleAdapter = new ArticleAdapter(sl.getShoppingListArticles(), this);
+            shoppingList = couchbaseHelper.getShoppingListById(l);
+            articleAdapter = new ArticleAdapter(shoppingList.getShoppingListArticles(), this);
             listView.setAdapter(articleAdapter);
             articleAdapter.notifyDataSetChanged();
         } else {
             /**
              * Initialize an instance of our databaseHelper class and call our methods.
              */
-            couchbaseHelper = new CouchbaseHelper(this);
-
-            sl = new ShoppingList();
-            articleAdapter = new ArticleAdapter(sl.getShoppingListArticles(), this);
+            articleAdapter = new ArticleAdapter(shoppingList.getShoppingListArticles(), this);
             listView.setAdapter(articleAdapter);
         }
 
@@ -130,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (sl.getShoppingListId() == "") {
+                if (shoppingList.getShoppingListId() == "") {
                     Log.d(TAG, "ShoppingList without shoppingListId.");
 
                     /**
@@ -142,22 +137,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         if (amount.equals("") || amount.equals("0")) {
                             amount = "1";
                         }
-                        sl.getShoppingListArticles().add(new Article(articleName.getText().toString(), amount , false));
+                        shoppingList.getShoppingListArticles().add(new Article(articleName.getText().toString(), amount , false));
                         articleAdapter.notifyDataSetChanged();
                         Snackbar.make(view, amount + " " + " " + articleName.getText() + " Hinzugefügt! " , Snackbar.LENGTH_LONG)
                                 .setAction("Action", null).show();
                     }
-                    Article tmpArticle = new Article(articleName.getText().toString(), amount , false);
-                    articleList.add(tmpArticle);
-                    shoppingList.setShoppinglistSingelArtikel(tmpArticle);
                     articleAdapter.notifyDataSetChanged();
-                    Toast.makeText(view.getContext(), "Neues Artikel erstellt",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(view.getContext(), "Neuer Artikel erstellt",Toast.LENGTH_SHORT).show();
 
-                    shoppingListId = couchbaseHelper.addShoppingList(sl);
-                    sl.setShoppingListId(shoppingListId);
-                    Log.d(TAG, "New shoppingListId: " + sl.getShoppingListId());
+                    shoppingListId = couchbaseHelper.addShoppingList(shoppingList);
+                    shoppingList.setShoppingListId(shoppingListId);
+                    Log.d(TAG, "New shoppingListId: " + shoppingList.getShoppingListId());
                 } else {
-                    Log.d(TAG, "ShoppingListId: " + sl.getShoppingListId());
+                    Log.d(TAG, "ShoppingListId: " + shoppingList.getShoppingListId());
 
                     /**
                      * TODO: Generalize, find solution for avoiding code duplication.
@@ -168,14 +160,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         if (amount.equals("") || amount.equals("0")) {
                             amount = "1";
                         }
-                        sl.getShoppingListArticles().add(new Article(articleName.getText().toString(), amount , false));
+                        shoppingList.getShoppingListArticles().add(new Article(articleName.getText().toString(), amount , false));
                         articleAdapter.notifyDataSetChanged();
                         Snackbar.make(view, amount + " " + " " + articleName.getText() + " Hinzugefügt! " , Snackbar.LENGTH_LONG)
                                 .setAction("Action", null).show();
                     }
 
-                    couchbaseHelper.updateShoppinglist(sl.getShoppingListId(), sl);
-                    Log.d(TAG, "New shoppingListId: " + sl.getShoppingListId());
+                    couchbaseHelper.updateShoppinglist(shoppingList.getShoppingListId(), shoppingList);
+                    Log.d(TAG, "New shoppingListId: " + shoppingList.getShoppingListId());
                 }
                 articleName.setText("");
                 articleAmount.setText("");
@@ -187,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Article art = sl.getShoppingListArticles().get(position);
+                Article art = shoppingList.getShoppingListArticles().get(position);
                 if (art.isArticleChecked()) {
                     art.setArticleChecked(false);
                     articleAdapter.notifyDataSetChanged();
@@ -254,7 +246,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (id == R.id.action_save){
             saver.saveShoppingliste(shoppingList);
-            Toast.makeText(MainActivity.this, "Neues Artikel erstellt",Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "Neuer Artikel erstellt",Toast.LENGTH_SHORT).show();
             articleAdapter.notifyDataSetChanged();
             return true;
         }
@@ -331,12 +323,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (item.getItemId()) {
 
             case R.id.context_delete:
-                this.sl.getShoppingListArticles().remove(position);
+                this.shoppingList.getShoppingListArticles().remove(position);
                 this.articleAdapter.notifyDataSetChanged();
                 break;
             case R.id.context_edit:
 
-                createEditDialog(sl.getShoppingListArticles().get(position));
+                createEditDialog(shoppingList.getShoppingListArticles().get(position));
                 break;
         }
         return super.onContextItemSelected(item);
