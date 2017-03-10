@@ -12,14 +12,11 @@ import com.couchbase.lite.QueryRow;
 import com.couchbase.lite.android.AndroidContext;
 
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import static android.R.attr.key;
 
 public class CouchbaseHelper {
 
@@ -192,7 +189,7 @@ public class CouchbaseHelper {
                 }
                 if(entry.getKey() == "articlePrice" && entry.getValue() != null) {
                     Log.d(TAG, "articlePrice: " + entry.getValue());
-                    article.setArticlePrice((Double) entry.getValue());
+                    article.setArticlePrice(entry.getValue().toString());
                 }
                 if(entry.getKey() == "articleComment" && entry.getValue() != null) {
                     Log.d(TAG, "articleComment: " + entry.getValue());

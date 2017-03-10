@@ -12,8 +12,10 @@
     <string name="divider">Info</string>
     <string name="subheader">Ein Projekt von IT 0815+1</string>
 
-    <string name="action_sort">alphabetisch Sortieren</string>
+    <string name="action_sort">Liste sortieren</string>
     <string name="action_rename">Liste umbenennen</string>
+    <string name="action_load">Liste laden</string>
+    <string name="action_save">Liste speichern</string>
 
     <string name="input_artikel">Artikel</string>
     <string name="input_anzahl">Anzahl</string>
