@@ -33,8 +33,11 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
         AdapterView.OnItemLongClickListener{
@@ -43,8 +46,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     EditText articleAmount;
     FloatingActionButton fab;
     ListView listView;
+    static int counter = 0;
 
-//    List<Article> articleList;
+        List<Article> articleList;
     CouchbaseHelper couchbaseHelper;
     ShoppingList sl;
     String shoppingListId;
@@ -70,11 +74,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         articleName.setTypeface(typeface);
         articleAmount = (EditText) findViewById(R.id.input_anzahl);
         articleAmount.setTypeface(typeface);
+        articleList = new ArrayList<Article>();
+        articleAdapter = new ArticleAdapter(articleList, this);
+        listView.setAdapter(articleAdapter);
+        listView.setOnItemLongClickListener(this);
+        registerForContextMenu(listView);
+
+        couchbaseHelper = new CouchbaseHelper(this);
 
         if(getIntent().hasExtra("uid") == true)
         {
-            String l = getIntent().getExtras().getString("uid");
-            Log.d(TAG, "Uid in MainActivity: " + l);
+            String uid = getIntent().getExtras().getString("uid");
+            Log.d(TAG, "Uid in MainActivity: " + uid);
 //            Toast toast = Toast.makeText(this, ""+l, Toast.LENGTH_SHORT);
 //            toast.show();
             /**
@@ -82,25 +93,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
              */
             couchbaseHelper = new CouchbaseHelper(this);
 
-            sl = new ShoppingList();
-            sl = couchbaseHelper.getShoppingListById(l);
-            articleAdapter = new ArticleAdapter(sl.getShoppingListArticles(), this);
+            sl = new ShoppingList("hallo",uid);
+            //sl.setShoppingListId(uid);
+            sl = couchbaseHelper.getShoppingListById(uid);
+            Log.d(TAG, "UID after DB read: " + sl.getShoppingListId());
+            articleList = sl.getShoppingListArticles();
+            articleAdapter = new ArticleAdapter(articleList, this);
             listView.setAdapter(articleAdapter);
             articleAdapter.notifyDataSetChanged();
         } else {
             /**
              * Initialize an instance of our databaseHelper class and call our methods.
              */
-            couchbaseHelper = new CouchbaseHelper(this);
+//            couchbaseHelper = new CouchbaseHelper(this);
 
             sl = new ShoppingList();
-            articleAdapter = new ArticleAdapter(sl.getShoppingListArticles(), this);
-            listView.setAdapter(articleAdapter);
+//            articleAdapter = new ArticleAdapter(sl.getShoppingListArticles(), this);
+//            listView.setAdapter(articleAdapter);
         }
 
-        listView.setOnItemLongClickListener(this);
+        //listView.setOnItemLongClickListener(this);
 
-        registerForContextMenu(listView);
+        //registerForContextMenu(listView);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -129,7 +143,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         if (amount.equals("") || amount.equals("0")) {
                             amount = "1";
                         }
-                        sl.getShoppingListArticles().add(new Article(articleName.getText().toString(), amount , false));
+                        Article articleTemp = new Article(articleName.getText().toString(), amount , false);
+//                        sl.getShoppingListArticles().add(new Article(articleName.getText().toString(), amount , false));
+//                        sl.setShoppingListName("Unbekannte Liste " + counter++);
+                        setTitle(sl.getShoppingListName());
+                        sl.setShoppingListSingleArticle(articleTemp);
+                        articleList.add(articleTemp);
                         articleAdapter.notifyDataSetChanged();
                         Snackbar.make(view, amount + " " + " " + articleName.getText() + " Hinzugefügt! " , Snackbar.LENGTH_LONG)
                                 .setAction("Action", null).show();
@@ -137,7 +156,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                     shoppingListId = couchbaseHelper.addShoppingList(sl);
                     sl.setShoppingListId(shoppingListId);
+                    couchbaseHelper.updateShoppinglist(sl.getShoppingListId(), sl);
                     Log.d(TAG, "New shoppingListId: " + sl.getShoppingListId());
+                    Log.d(TAG, "New name: " + sl.getShoppingListName());
+                    Log.d(TAG, "New price: " + sl.getShoppingListTotalPrice());
+                    Log.d(TAG, "New Index of articleName: " + sl.getShoppingListArticleById(0).getArticleName());
                 } else {
                     Log.d(TAG, "ShoppingListId: " + sl.getShoppingListId());
 
@@ -150,7 +173,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         if (amount.equals("") || amount.equals("0")) {
                             amount = "1";
                         }
-                        sl.getShoppingListArticles().add(new Article(articleName.getText().toString(), amount , false));
+                        Article articleTmp = new Article(articleName.getText().toString(), amount , false);
+                        sl.setShoppingListSingleArticle(articleTmp);
+                        articleList.add(articleTmp);
                         articleAdapter.notifyDataSetChanged();
                         Snackbar.make(view, amount + " " + " " + articleName.getText() + " Hinzugefügt! " , Snackbar.LENGTH_LONG)
                                 .setAction("Action", null).show();
@@ -170,13 +195,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d(TAG, "ShoppingListId: " + sl.getShoppingListId());
+                Log.d(TAG, "ShoppingListName: " + sl.getShoppingListName());
+
+                String uid = couchbaseHelper.addShoppingList(sl);
+                Log.d(TAG, "UIDDDDDD: " + uid);
+                sl = couchbaseHelper.getShoppingListById(uid);
+
+                Log.d(TAG, "+++++++++++ ShoppingListId: " + sl.getShoppingListId());
+
+
                 Article art = sl.getShoppingListArticles().get(position);
                 if (art.isArticleChecked()) {
                     art.setArticleChecked(false);
+//                    couchbaseHelper.updateShoppinglist(sl.getShoppingListId(), sl);
                     articleAdapter.notifyDataSetChanged();
                 }
                 else {
                     art.setArticleChecked(true);
+//                    couchbaseHelper.updateShoppinglist(sl.getShoppingListId(), sl);
                     articleAdapter.notifyDataSetChanged();
                 }
             }
@@ -299,6 +336,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         client.disconnect();
     }
 
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        view.getContext();
+        registerForContextMenu(listView);
+
+        Toast.makeText(MainActivity.this, sl.getShoppingListArticles().get(position).getArticleName(),Toast.LENGTH_SHORT).show();
+        //createEditDialog(articleList.get(position));
+        return false;
+    }
+
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.context_menu, menu);
+    }
+
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         int position = (int) info.id;
@@ -315,23 +369,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
         }
         return super.onContextItemSelected(item);
-    }
-
-    @Override
-    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        view.getContext();
-        registerForContextMenu(listView);
-
-        Toast.makeText(MainActivity.this, sl.getShoppingListArticles().get(position).getArticleName(),Toast.LENGTH_SHORT).show();
-        //createEditDialog(articleList.get(position));
-        return false;
-    }
-
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.context_menu, menu);
     }
 
     public void createEditDialog(final Article arti) {
@@ -364,6 +401,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .setPositiveButton("Save",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
+                                Log.d(TAG, "!!!!!!!!!!!!!!!!!!!!!!!" +sl.getShoppingListArticleById(sl.getArticlePositionByShoppingListArticle(arti)).getArticleName());
                                 arti.setArticleName(inputText1.getText().toString());
                                 arti.setArticleAmount(inputText2.getText().toString());
                                 if(inputText3.getText().toString().equals("")){
@@ -375,7 +413,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 arti.setArticleUnit(inputText4.getText().toString());
                                 arti.setArticleComment(inputText5.getText().toString());
                                 arti.setArticleChecked(isSelected.isChecked());
+//                                sl.setArticleAtPosition(sl.getArticlePositionByShoppingListArticle(arti), arti);
                                 articleAdapter.notifyDataSetChanged();
+                                Log.d(TAG, "ID: " + sl.getShoppingListId());
+                                Log.d(TAG, "ID: " + sl.getShoppingListId());
+//                                couchbaseHelper.updateShoppinglist(sl.getShoppingListId(), sl);
                             }
                         })
                 .setNegativeButton("Cancel",

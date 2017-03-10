@@ -109,9 +109,13 @@ public class CouchbaseHelper {
      * @param shoppingList
      */
     public void updateShoppinglist(String id, ShoppingList shoppingList) {
+        Log.e(TAG, "ID => " + id);
         Document doc = database.getDocument(id);
+        Log.e(TAG, "Doc: " + doc + " ID => " + id);
         Map<String, Object> properties = new HashMap<String, Object>();
+        Log.e(TAG, "After map.");
         properties.putAll(doc.getProperties());
+        Log.e(TAG, "After putAll.");
         properties.put(shoppingList.getShoppingListName(), shoppingList);
         try {
             doc.putProperties(properties);

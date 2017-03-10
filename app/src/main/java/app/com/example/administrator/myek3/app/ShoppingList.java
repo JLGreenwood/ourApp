@@ -1,5 +1,7 @@
 package app.com.example.administrator.myek3.app;
 
+import android.util.Log;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,8 +32,10 @@ public class ShoppingList implements Serializable {
         this.shoppingListCompleted = false;
         this.shoppingListId = "";
     }
-    public ShoppingList(String shoppingListName) {
+    public ShoppingList(String shoppingListName, String shoppingListId) {
         this.shoppingListName = shoppingListName;
+        this.shoppingListId = shoppingListId;
+        this.shoppingListArticles = new ArrayList<>();
         this.shoppingListTotalPrice = 0.0;
         this.shoppingListCompleted = false;
     }
@@ -65,6 +69,13 @@ public class ShoppingList implements Serializable {
     public void setShoppingListId(String shoppingListId) {
         this.shoppingListId = shoppingListId;
     }
+    public void setShoppingListSingleArticle(Article article) {
+        this.shoppingListArticles.add(article);
+    }
+    public void setArticleAtPosition(int position, Article article){
+        Log.d("TEST", "TEST::::::: " + position + " - " + article.getArticleName() + " =>>> " + this.shoppingListArticles.get(position).getArticleName());
+        this.shoppingListArticles.set(position, article);
+    }
 
     // Getter
     public String getShoppingListName() {
@@ -76,8 +87,17 @@ public class ShoppingList implements Serializable {
     public Article getShoppingListArticleById(int position) {
         return this.shoppingListArticles.get(position);
     }
+    public int getArticlePositionByShoppingListArticle (Article article) {
+        return this.shoppingListArticles.indexOf(article);
+    }
     public int getShoppingListArticleCount() {
         return shoppingListArticles.size();
+    }
+    public boolean ShoppingListContainsArticle(Article article){
+        if (this.shoppingListArticles.equals(article)){
+            return true;
+        }
+        return false;
     }
     public double getShoppingListTotalPrice() {
         return shoppingListTotalPrice;
