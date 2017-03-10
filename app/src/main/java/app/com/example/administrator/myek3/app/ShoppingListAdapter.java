@@ -28,8 +28,6 @@ public class ShoppingListAdapter extends BaseAdapter{
     public ShoppingListAdapter(List<ShoppingList> shoppingListList, Context context){
         this.shoppingListList = shoppingListList;
         inflater = LayoutInflater.from(context);
-
-
     }
 
     // Getter()/Setter()
@@ -71,7 +69,7 @@ public class ShoppingListAdapter extends BaseAdapter{
             holder = (ShoppingListAdapter.ViewHolder)convertView.getTag();
         }
         shoppingList = (ShoppingList)getItem(position);
-        holder.shoppingListView.setText(shoppingList.getShoppingListName());
+        holder.shoppingListView.setText(shoppingList.getShoppingListName() + " (" + shoppingList.getShoppingListArticleCount() + ")");
         return convertView;
     }
 

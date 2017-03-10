@@ -1,9 +1,11 @@
 package app.com.example.administrator.myek3.app;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.text.DateFormat;
+import java.util.Locale;
 
 /**
  * Created by Darth Vader on 02.03.2017
@@ -22,11 +24,12 @@ public class ShoppingList implements Serializable {
     private boolean shoppingListCompleted;
     private String shoppingListId;
     private ArrayList<Article> shoppingListArticles;
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy - hh:mm", Locale.GERMANY);
 //    private static int listenNumber = 0;
 
     // Konstruktor
     public ShoppingList() {
-        this.shoppingListName = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(new Date());
+        this.shoppingListName = dateFormat.format(new Date());
         this.shoppingListTotalPrice = "0.00";
         this.shoppingListArticles = new ArrayList<Article>();
         this.shoppingListCompleted = false;
@@ -37,6 +40,7 @@ public class ShoppingList implements Serializable {
         this.shoppingListTotalPrice = "0.00";
         this.shoppingListCompleted = false;
         this.shoppingListArticles = new ArrayList<Article>();
+        this.shoppingListId = "";
     }
     public ShoppingList(String shoppingListName, ArrayList<Article> shoppingListArticles) {
         this.shoppingListName = shoppingListName;
@@ -50,6 +54,7 @@ public class ShoppingList implements Serializable {
         this.shoppingListArticles = shoppingListArticles;
         this.shoppingListTotalPrice = shoppingListTotalPrice;
         this.shoppingListCompleted = false;
+        this.shoppingListId = "";
     }
 
     // Setter

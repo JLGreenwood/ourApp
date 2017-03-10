@@ -32,6 +32,7 @@ import static app.com.example.administrator.myek3.app.R.id.fab;
 public class ListActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+
     FloatingActionButton fab;
     ListView listView;
 
@@ -46,6 +47,8 @@ public class ListActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
+
+        setTitle("Vorhandene Listen");
 
         ctx = getApplication();
 
@@ -138,8 +141,9 @@ public class ListActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_ekl_list) {
-            Intent i = new Intent(this, MainActivity.class);
-            startActivity(i);
+//            Intent i = new Intent(this, MainActivity.class);
+//            startActivity(i);
+            finish();
         } else if (id == R.id.nav_liste_list) {
 
         } else if (id == R.id.nav_stat_list) {
