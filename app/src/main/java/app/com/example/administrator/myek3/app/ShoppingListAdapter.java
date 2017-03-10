@@ -1,6 +1,7 @@
 package app.com.example.administrator.myek3.app;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,11 +20,16 @@ public class ShoppingListAdapter extends BaseAdapter{
     private ShoppingList shoppingList;
     private final List<ShoppingList> shoppingListList;
     private final LayoutInflater inflater;
+    ShoppingList sl;
+
+    private static final String TAG = ShoppingListAdapter.class.getSimpleName();
 
     // Konstruktoren
     public ShoppingListAdapter(List<ShoppingList> shoppingListList, Context context){
         this.shoppingListList = shoppingListList;
         inflater = LayoutInflater.from(context);
+
+
     }
 
     // Getter()/Setter()
@@ -46,6 +52,16 @@ public class ShoppingListAdapter extends BaseAdapter{
     public View getView(final int position, View convertView, ViewGroup parent) {
         final ShoppingListAdapter.ViewHolder holder;
 
+        Log.d(TAG, "SIZE: " + shoppingListList.size());
+
+        for (int i = 0; i < shoppingListList.size(); i++) {
+            Log.d(TAG, "MOEP: " + shoppingListList.get(i).getShoppingListName());
+            Log.d(TAG, "MOEP: " + shoppingListList.get(i).getShoppingListId());
+            Log.d(TAG, "MOEP: " + shoppingListList.get(i).getShoppingListArticleCount());
+            Log.d(TAG, "MOEP: " + shoppingListList.get(i).getShoppingListArticles());
+            Log.d(TAG, "MOEP: " + shoppingListList.get(i).getShoppingListTotalPrice());
+        }
+
         if(convertView == null){
             convertView = inflater.inflate(R.layout.list_item_eklise, parent, false);
             holder = new ShoppingListAdapter.ViewHolder();
@@ -55,7 +71,6 @@ public class ShoppingListAdapter extends BaseAdapter{
             holder = (ShoppingListAdapter.ViewHolder)convertView.getTag();
         }
         shoppingList = (ShoppingList)getItem(position);
-//        holder.shoppingListView.setText(shoppingList.getShoppingListName() + shoppingList.getShoppingListArticleCount());
         holder.shoppingListView.setText(shoppingList.getShoppingListName());
         return convertView;
     }

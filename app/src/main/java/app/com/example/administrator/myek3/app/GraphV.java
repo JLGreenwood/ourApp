@@ -106,7 +106,7 @@ public class GraphV extends AppCompatActivity implements NavigationView.OnNaviga
         graphview.getViewport().setXAxisBoundsManual(true);
         graphview.getViewport().setMinX(0);
 
-// set manual Y bounds
+        // set manual Y bounds
         graphview.getViewport().setYAxisBoundsManual(true);
         graphview.getViewport().setMinY(0);
 
@@ -128,7 +128,7 @@ public class GraphV extends AppCompatActivity implements NavigationView.OnNaviga
         };
         return (dp);
     }
-    @SuppressWarnings("StatementWithEmptyBody")
+
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -148,7 +148,7 @@ public class GraphV extends AppCompatActivity implements NavigationView.OnNaviga
             mysession.setFirstTimeLaunch(true);
             Intent intent = new Intent(this, WelcomeActivity.class);
             startActivity(intent);
-        } else if (id == R.id.nav_imp) {
+        // } else if (id == R.id.nav_imp) {
 
         }
 

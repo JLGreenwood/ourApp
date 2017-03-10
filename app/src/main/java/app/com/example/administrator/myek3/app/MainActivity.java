@@ -7,12 +7,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -31,18 +33,29 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
         AdapterView.OnItemLongClickListener{
+
+    private static final String TAG = "MainActivity";
 
     EditText articleName;
     EditText articleAmount;
     FloatingActionButton fab;
     ListView listView;
+
     ShoppingList shoppingList;
     List<Article> articleList;
+
+
+    CouchbaseHelper couchbaseHelper;
+    ShoppingList sl;
+    String shoppingListId;
+
     ArticleAdapter articleAdapter;
     Saver saver;
     static int counter = 1;
@@ -71,9 +84,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         articleAmount = (EditText) findViewById(R.id.input_anzahl);
         articleAmount.setTypeface(typeface);
 
-        articleList = new ArrayList<Article>();
-        articleAdapter = new ArticleAdapter(articleList, this);
-        listView.setAdapter(articleAdapter);
+        if(getIntent().hasExtra("uid") == true)
+        {
+            String l = getIntent().getExtras().getString("uid");
+            Log.d(TAG, "Uid in MainActivity: " + l);
+//            Toast toast = Toast.makeText(this, ""+l, Toast.LENGTH_SHORT);
+//            toast.show();
+            /**
+             * Initialize an instance of our databaseHelper class and call our methods.
+             */
+            couchbaseHelper = new CouchbaseHelper(this);
+
+            sl = new ShoppingList();
+            sl = couchbaseHelper.getShoppingListById(l);
+            articleAdapter = new ArticleAdapter(sl.getShoppingListArticles(), this);
+            listView.setAdapter(articleAdapter);
+            articleAdapter.notifyDataSetChanged();
+        } else {
+            /**
+             * Initialize an instance of our databaseHelper class and call our methods.
+             */
+            couchbaseHelper = new CouchbaseHelper(this);
+
+            sl = new ShoppingList();
+            articleAdapter = new ArticleAdapter(sl.getShoppingListArticles(), this);
+            listView.setAdapter(articleAdapter);
+        }
+
         listView.setOnItemLongClickListener(this);
 
         registerForContextMenu(listView);
@@ -93,17 +130,52 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (articleName.getText().length() > 0) {
-                    articleAmount.requestFocus();
+                if (sl.getShoppingListId() == "") {
+                    Log.d(TAG, "ShoppingList without shoppingListId.");
+
+                    /**
+                     * TODO: Generalize, find solution for avoiding code duplication.
+                     */
                     String amount = articleAmount.getText().toString();
-                    if (amount.equals("") || amount.equals("0")) {
-                        amount = "1";
+                    if (articleName.getText().length() > 0) {
+                        articleAmount.requestFocus();
+                        if (amount.equals("") || amount.equals("0")) {
+                            amount = "1";
+                        }
+                        sl.getShoppingListArticles().add(new Article(articleName.getText().toString(), amount , false));
+                        articleAdapter.notifyDataSetChanged();
+                        Snackbar.make(view, amount + " " + " " + articleName.getText() + " Hinzugefügt! " , Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
                     }
                     Article tmpArticle = new Article(articleName.getText().toString(), amount , false);
                     articleList.add(tmpArticle);
                     shoppingList.setShoppinglistSingelArtikel(tmpArticle);
                     articleAdapter.notifyDataSetChanged();
                     Toast.makeText(view.getContext(), "Neues Artikel erstellt",Toast.LENGTH_SHORT).show();
+
+                    shoppingListId = couchbaseHelper.addShoppingList(sl);
+                    sl.setShoppingListId(shoppingListId);
+                    Log.d(TAG, "New shoppingListId: " + sl.getShoppingListId());
+                } else {
+                    Log.d(TAG, "ShoppingListId: " + sl.getShoppingListId());
+
+                    /**
+                     * TODO: Generalize, find solution for avoiding code duplication.
+                     */
+                    if (articleName.getText().length() > 0) {
+                        articleAmount.requestFocus();
+                        String amount = articleAmount.getText().toString();
+                        if (amount.equals("") || amount.equals("0")) {
+                            amount = "1";
+                        }
+                        sl.getShoppingListArticles().add(new Article(articleName.getText().toString(), amount , false));
+                        articleAdapter.notifyDataSetChanged();
+                        Snackbar.make(view, amount + " " + " " + articleName.getText() + " Hinzugefügt! " , Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                    }
+
+                    couchbaseHelper.updateShoppinglist(sl.getShoppingListId(), sl);
+                    Log.d(TAG, "New shoppingListId: " + sl.getShoppingListId());
                 }
                 articleName.setText("");
                 articleAmount.setText("");
@@ -111,10 +183,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
+
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Article art = articleList.get(position);
+                Article art = sl.getShoppingListArticles().get(position);
                 if (art.isArticleChecked()) {
                     art.setArticleChecked(false);
                     articleAdapter.notifyDataSetChanged();
@@ -125,11 +199,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
         });
-
-        /**
-         * Initialize an instance of our databaseHelper class and call our methods.
-         */
-        CouchbaseHelper couchbaseHelper = new CouchbaseHelper(this);
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -169,7 +238,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (id == R.id.action_sort) {
             articleList = CheckData.articleListSort(articleList);
             shoppingList.setShoppingListArticles(CheckData.articleListSort(shoppingList.getShoppingListArticles()));
-            //Toast.makeText(MainActivity.this, "Neues Artikel erstellt",Toast.LENGTH_SHORT).show();
+            //Toast.makeText(MainActivity.this, "Neuer Artikel erstellt",Toast.LENGTH_SHORT).show();
             articleAdapter.notifyDataSetChanged();
             return true;
         }
@@ -187,9 +256,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (id == R.id.action_save){
             saver.saveShoppingliste(shoppingList);
             Toast.makeText(MainActivity.this, "Neues Artikel erstellt",Toast.LENGTH_SHORT).show();
+            articleAdapter.notifyDataSetChanged();
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -212,9 +281,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             mysession.setFirstTimeLaunch(true);
             Intent intent = new Intent(this, WelcomeActivity.class);
             startActivity(intent);
-        } else if (id == R.id.nav_imp) {
+//        } else if (id == R.id.nav_imp) {
 
-    }
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -264,16 +333,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (item.getItemId()) {
 
             case R.id.context_delete:
-                this.articleList.remove(position);
+                this.sl.getShoppingListArticles().remove(position);
                 this.articleAdapter.notifyDataSetChanged();
                 break;
             case R.id.context_edit:
 
-                createEditDialog(articleList.get(position));
+                createEditDialog(sl.getShoppingListArticles().get(position));
                 break;
         }
         return super.onContextItemSelected(item);
     }
+
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 
@@ -283,10 +353,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
     public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, view, menuInfo);
-
+        //createEditDialog(articleList.get(position));
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.context_menu, menu);
     }
+
     public void createEditDialog(final Article arti) {
 
         LayoutInflater li = LayoutInflater.from(MainActivity.this);
@@ -321,7 +392,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 arti.setArticleAmount(inputText2.getText().toString());
                                 arti.setArticlePrice(CheckData.formatData(inputText3.getText().toString()));
                                 arti.setArticleUnit(inputText4.getText().toString());
-                                arti.setArticleComment(inputText4.getText().toString());
+                                arti.setArticleComment(inputText5.getText().toString());
                                 arti.setArticleChecked(isSelected.isChecked());
                                 articleAdapter.notifyDataSetChanged();
                             }

@@ -58,7 +58,6 @@ public class ArticleAdapter extends BaseAdapter{
             holder = (ArticleAdapter.ViewHolder)convertView.getTag();
         }
         article = (Article)getItem(position);
-//        Log.d("TEST", "Article: " + article.toString());
         holder.articleView.setText("" + article.getArticleName() + " (" + article.getArticleAmount() + ")");
         holder.a = article.isArticleChecked();
 

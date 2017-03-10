@@ -26,11 +26,11 @@ public class ShoppingList implements Serializable {
 
     // Konstruktor
     public ShoppingList() {
-        //this.shoppingListName = new SimpleDateFormat("E yyyy.MM.dd 'at' hh:mm:ss a zzz").format(new Date()).toString();
         this.shoppingListName = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(new Date());
         this.shoppingListTotalPrice = "0.00";
-        this.shoppingListCompleted = false;
         this.shoppingListArticles = new ArrayList<Article>();
+        this.shoppingListCompleted = false;
+        this.shoppingListId = "";
     }
     public ShoppingList(String shoppingListName) {
         this.shoppingListName = shoppingListName;
@@ -43,6 +43,7 @@ public class ShoppingList implements Serializable {
         this.shoppingListArticles = shoppingListArticles;
         this.shoppingListTotalPrice = "0.00";
         this.shoppingListCompleted = false;
+        this.shoppingListId = "";
     }
     public ShoppingList(String shoppingListName, ArrayList<Article> shoppingListArticles, String shoppingListTotalPrice) {
         this.shoppingListName = shoppingListName;
