@@ -8,6 +8,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.jjoe64.graphview.DefaultLabelFormatter;
@@ -18,17 +19,25 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.PointsGraphSeries;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
+
 import static app.com.example.administrator.myek3.app.R.color.colorPrimary;
 
 
 public class GraphV extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private LineGraphSeries<DataPoint> series;
 
+//    android.content.Context ctx = getApplicationContext();
+    private static final String TAG = GraphV.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_graph);
+
+//        ctx = getApplication();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -43,18 +52,19 @@ public class GraphV extends AppCompatActivity implements NavigationView.OnNaviga
         navigationView.setNavigationItemSelectedListener(this);
 
         GraphView graph = (GraphView) findViewById(R.id.action_graph);
-        PointsGraphSeries<DataPoint> series2 = new PointsGraphSeries<>(new DataPoint[]{
-                new DataPoint(0, 41),
-                new DataPoint(1, 33),
-                new DataPoint(2, 89),
-                new DataPoint(3, 90),
-                new DataPoint(4, 80),
-                new DataPoint(5, 34),
-                new DataPoint(6, 62),
-                new DataPoint(7, 92),
-
-                // Datapoint einträge
-        });
+        PointsGraphSeries<DataPoint> series2 = new PointsGraphSeries<>(getDatapoint());
+//        PointsGraphSeries<DataPoint> series2 = new PointsGraphSeries<>(new DataPoint[]{
+//                new DataPoint(0, 41),
+//                new DataPoint(1, 33),
+//                new DataPoint(2, 89),
+//                new DataPoint(3, 90),
+//                new DataPoint(4, 80),
+//                new DataPoint(5, 34),
+//                new DataPoint(6, 62),
+//                new DataPoint(7, 92),
+//
+//                // Datapoint einträge
+//        });
         graph.addSeries(series2);
         series2.setShape(PointsGraphSeries.Shape.POINT);
         series2.setColor(colorPrimary);
@@ -79,7 +89,7 @@ public class GraphV extends AppCompatActivity implements NavigationView.OnNaviga
                     return super.formatLabel(value, isValueX);
                 } else {
                     // show currency for y values
-                    return super.formatLabel(value, isValueX) + " €";
+                    return super.formatLabel(value, isValueX) + " moins";
                 }
             }
         });
@@ -115,18 +125,29 @@ public class GraphV extends AppCompatActivity implements NavigationView.OnNaviga
 
     private DataPoint[] getDatapoint() {
 
+        ShoppingList sl;
+        CouchbaseHelper cbh = new CouchbaseHelper(getApplicationContext());
+        ArrayList<String> allShoppingListIds = cbh.getAllDocumentIds();
+        ArrayList<Article> articleArrayList = new ArrayList<Article>();
+        int count = 0;
 
-        DataPoint[] dp = new DataPoint[]{
-                new DataPoint(0, 41),
-                new DataPoint(1, 33),
-                new DataPoint(2, 89),
-                new DataPoint(3, 90),
-                new DataPoint(4, 80),
-                new DataPoint(5, 34),
-                new DataPoint(6, 62),
-                new DataPoint(7, 92),
-        };
-        return (dp);
+        for (String slid : allShoppingListIds) {
+            sl = cbh.getShoppingListById(slid);
+            count += sl.getShoppingListArticleCount();
+
+            for (Article art : sl.getShoppingListArticles()) {
+                articleArrayList.add(art);
+            }
+
+        }
+        DataPoint[] values = new DataPoint[count];
+
+        for (int j = 0; j < count; j++) {
+            Article artt = articleArrayList.get(j);
+            DataPoint v = new DataPoint((double)j, Double.parseDouble(artt.getArticleAmount()));
+            values[j] = v;
+        }
+        return (values);
     }
 
     @Override
