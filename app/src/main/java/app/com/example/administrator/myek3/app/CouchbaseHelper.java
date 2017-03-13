@@ -131,7 +131,7 @@ public class CouchbaseHelper {
 
         String listName = null;
         List<Article> articleList = new ArrayList<Article>();
-        ShoppingList shoppingList;
+        ShoppingList shoppingList = new ShoppingList();
 
         Log.d(TAG, "Calling getShoppingListById: " + id);
         Document doc = database.getDocument(id);
@@ -141,9 +141,35 @@ public class CouchbaseHelper {
         for(Map.Entry<String, Object> entry : properties.entrySet()) {
             Log.d(TAG, "Key => " + entry.getKey());
             Log.d(TAG, "Value => " + entry.getValue());
+            // Setting document ID from the object in the database.
+            if(entry.getKey() == "_id") {
+                shoppingList.setShoppingListId((String) entry.getValue());
+            }
             if(entry.getKey() != "_id" && entry.getKey() != "_rev") {
                 Log.d(TAG, "List name: " + entry.getKey());
                 listName = entry.getKey();
+            }
+        }
+
+        /**
+         * Iterating over all attributes of the ShoppingList object and reassigning them to the
+         * current instance. All attributes of the Object need to be mapped here to ensure the object
+         * and its values are complete.
+         */
+        Map<String, Object> myShoppingListAttributes = (Map<String, Object>) doc.getProperty(listName);
+        for(Map.Entry<String, Object> attribute : myShoppingListAttributes.entrySet()) {
+
+            if(attribute.getKey() == "shoppingListName") {
+                Log.d(TAG, "shoppingListName: " + attribute.getValue());
+                shoppingList.setShoppingListName(attribute.getValue().toString());
+            }
+            if(attribute.getKey() == "shoppingListTotalPrice") {
+                Log.d(TAG, "shoppingListTotalPrice: " + attribute.getValue());
+                shoppingList.setShoppingListTotalPrice(attribute.getValue().toString());
+            }
+            if(attribute.getKey() == "shoppingListCompleted") {
+                Log.d(TAG, "shoppingListCompleted: " + attribute.getValue());
+                shoppingList.setShoppingListCompleted(Boolean.parseBoolean(attribute.getValue().toString()));
             }
         }
 
@@ -192,8 +218,8 @@ public class CouchbaseHelper {
             }
             articleList.add(article);
         }
-        shoppingList = new ShoppingList(id, listName, (ArrayList<Article>) articleList);
         return shoppingList;
+
     }
 
     /**
